@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.11...3.21)
 
-project(liq
+project(Downpour
   VERSION 0.0.1
-  DESCRIPTION "liq"
+  DESCRIPTION "A game project utilizing liquidfun"
   LANGUAGES CXX
 )
 
@@ -34,4 +34,4 @@ message(STATUS "Making available SDL2...")
 FetchContent_MakeAvailable(SDL2)
 # Adds SDL2main
 
-
+add_subdirectory(src)
