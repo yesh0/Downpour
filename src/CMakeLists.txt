@@ -2,6 +2,7 @@ add_executable(downpour
   main.cc
   assets.cc
   nine_patch.cc
+  particle_batch.cc
 )
 
 add_dependencies(downpour embed_files)
@@ -13,6 +14,7 @@ set_target_properties(downpour PROPERTIES
 
 target_link_libraries(downpour PRIVATE
   Box2D
+  pugixml::static
   SFML::Audio
   SFML::Graphics
   # SFML::Main
@@ -23,6 +25,7 @@ target_link_libraries(downpour PRIVATE
 
 target_include_directories(downpour PRIVATE
   "${Box2D_SOURCE_DIR}"
+  "${pugixml_SOURCE_DIR}/src"
   "${SFML_SOURCE_DIR}/include"
   "../include"
 )
