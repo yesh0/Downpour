@@ -21,7 +21,7 @@ public:
 
 class BuiltInAssetManager : public AssetManager {
 private:
-  typedef std::map<std::string, AssetInfo *> AssetMap;
+  typedef std::map<const std::string, const AssetInfo *> AssetMap;
   AssetMap assetMap;
 
 public:

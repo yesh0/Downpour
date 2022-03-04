@@ -10,12 +10,6 @@
 
 using namespace std;
 
-AssetInfo BUNDLED_ASSETS[] = {
-    {"TextureBundle.png", TEXTUREBUNDLE_PNG, TEXTUREBUNDLE_PNG_SIZE},
-    {"TextureBundle.atlas", TEXTUREBUNDLE_ATLAS, TEXTUREBUNDLE_ATLAS_SIZE},
-    {nullptr, nullptr, 0},
-};
-
 const AssetInfo *AssetManager::getData(std::string name) const {
   return nullptr;
 }
