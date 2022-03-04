@@ -1,0 +1,38 @@
+
+TextureBundle.png
+size: 32, 16
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+plank
+  rotate: false
+  xy: 25, 3
+  size: 5, 5
+  split: 2, 2, 2, 2
+  pad: 2, 2, 2, 2
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+steel
+  rotate: false
+  xy: 18, 3
+  size: 5, 5
+  split: 2, 2, 2, 2
+  pad: 2, 2, 2, 2
+  orig: 5, 5
+  offset: 0, 0
+  index: -1
+water
+  rotate: false
+  xy: 2, 2
+  size: 6, 6
+  orig: 6, 6
+  offset: 0, 0
+  index: -1
+water2
+  rotate: false
+  xy: 10, 2
+  size: 6, 6
+  orig: 6, 6
+  offset: 0, 0
+  index: -1

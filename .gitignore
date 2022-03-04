@@ -1,2 +1,4 @@
 build/**
 .cache/**
+assets/textures/*
+include/builtin_assets.cc

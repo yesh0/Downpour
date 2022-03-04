@@ -1,14 +1,28 @@
 add_executable(downpour
   main.cc
+  assets.cc
+  nine_patch.cc
+)
+
+add_dependencies(downpour embed_files)
+
+set_target_properties(downpour PROPERTIES
+  CXX_STANDARD 17
+  CXX_EXTENSIONS OFF
 )
 
 target_link_libraries(downpour PRIVATE
   Box2D
-  SDL2main
-  SDL2-static
+  SFML::Audio
+  SFML::Graphics
+  # SFML::Main
+  SFML::Network
+  SFML::System
+  SFML::Window
 )
 
 target_include_directories(downpour PRIVATE
-  "${SDL2_SOURCE_DIR}/include"
   "${Box2D_SOURCE_DIR}"
+  "${SFML_SOURCE_DIR}/include"
+  "../include"
 )

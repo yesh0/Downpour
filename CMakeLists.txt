@@ -6,7 +6,6 @@ project(Downpour
   LANGUAGES CXX
 )
 
-set(CMAKE_CXX_EXTENSIONS OFF)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 include(CTest)
 include(FetchContent)
@@ -25,13 +24,16 @@ message(STATUS "Making available liquidfun...")
 FetchContent_MakeAvailable(liquidfun)
 # Adds liquidfun
 
-# SDL2
+# SFML
 FetchContent_Declare(
-  SDL2
-  GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
-  GIT_TAG release-2.0.20)
-message(STATUS "Making available SDL2...")
-FetchContent_MakeAvailable(SDL2)
-# Adds SDL2main
+  SFML
+  GIT_REPOSITORY https://github.com/SFML/SFML.git
+  GIT_TAG 28e935673c16f9b2e7eefa46e59a1d5f7bb1fbb8
+)
+message(STATUS "Making available SFML...")
+FetchContent_MakeAvailable(SFML)
+# Adds SFMLmain
+
+add_subdirectory(assets)
 
 add_subdirectory(src)
