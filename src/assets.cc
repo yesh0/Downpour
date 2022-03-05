@@ -42,9 +42,9 @@ bool parseArray(string text, int *array, size_t count) {
   return true;
 }
 
-BundledTexture::BundledTexture(std::string filename, AssetManager *manager)
+BundledTexture::BundledTexture(std::string filename, AssetManager &manager)
     : filename(filename), manager(manager) {
-  string atlas((const char *)manager->getData(filename)->data);
+  string atlas((const char *)manager.getData(filename)->data);
   stringstream ss(atlas);
   string line;
   string textureFilename("");
@@ -104,13 +104,13 @@ void BundledTexture::tryCommitRegionInfo(const std::string &textureFilename,
 sf::Sprite BundledTexture::getSprite(std::string name) {
   try {
     const TextureRegion &region = textureRegions.at(name);
-    auto i = textures.find(region.filename);
-    if (i == textures.end()) {
-      auto data = manager->getData(region.filename);
+    auto i = textures.lower_bound(region.filename);
+    if (i == textures.end() || i->first != region.filename) {
+      auto data = manager.getData(region.filename);
       sf::Texture texture;
-      if (texture.loadFromMemory(data->data, data->size)) {
-        i = textures.insert(i, make_pair(region.filename, texture));
-      } else {
+      i = textures.insert(i, make_pair(region.filename, texture));
+      if (!i->second.loadFromMemory(data->data, data->size)) {
+        textures.erase(i);
         return sf::Sprite();
       }
     }

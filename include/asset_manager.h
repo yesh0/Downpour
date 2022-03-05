@@ -38,7 +38,7 @@ private:
     int split[4];
   };
   const std::string filename;
-  const AssetManager *manager;
+  const AssetManager &manager;
   std::map<std::string, sf::Texture> textures;
   std::map<std::string, TextureRegion> textureRegions;
   void tryCommitRegionInfo(const std::string &textureFilename,
@@ -46,7 +46,7 @@ private:
                            const int *size, const int *split);
 
 public:
-  BundledTexture(std::string filename, AssetManager *manager);
+  BundledTexture(std::string filename, AssetManager &manager);
   sf::Sprite getSprite(std::string name);
   NinePatchSprite getNinePatch(std::string name);
 };
