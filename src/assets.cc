@@ -104,17 +104,15 @@ void BundledTexture::tryCommitRegionInfo(const std::string &textureFilename,
 sf::Sprite BundledTexture::getSprite(std::string name) {
   try {
     const TextureRegion &region = textureRegions.at(name);
-    auto i = textures.lower_bound(region.filename);
-    if (i == textures.end() || i->first != region.filename) {
+    auto pair = textures.try_emplace(region.filename);
+    if (pair.second) {
       auto data = manager.getData(region.filename);
-      sf::Texture texture;
-      i = textures.insert(i, make_pair(region.filename, texture));
-      if (!i->second.loadFromMemory(data->data, data->size)) {
-        textures.erase(i);
+      if (!pair.first->second.loadFromMemory(data->data, data->size)) {
+        textures.erase(pair.first);
         return sf::Sprite();
       }
     }
-    auto &texture = i->second;
+    auto &texture = pair.first->second;
 
     sf::IntRect rect(sf::Vector2i(region.x, region.y),
                      sf::Vector2i(region.size[0], region.size[1]));

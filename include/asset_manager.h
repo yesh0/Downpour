@@ -2,6 +2,7 @@
 #define ASSET_MANAGER_H
 
 #include <map>
+#include <unordered_map>
 #include <string>
 
 #include "SFML/Graphics.hpp"
@@ -39,7 +40,7 @@ private:
   };
   const std::string filename;
   const AssetManager &manager;
-  std::map<std::string, sf::Texture> textures;
+  std::unordered_map<std::string, sf::Texture> textures;
   std::map<std::string, TextureRegion> textureRegions;
   void tryCommitRegionInfo(const std::string &textureFilename,
                            const std::string &regionName, const int *xy,
