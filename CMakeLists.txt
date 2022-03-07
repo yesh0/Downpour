@@ -32,7 +32,17 @@ FetchContent_Declare(
 )
 message(STATUS "Making available SFML...")
 FetchContent_MakeAvailable(SFML)
-# Adds SFMLmain
+# Adds SFML::*
+
+# pugixml
+FetchContent_Declare(
+  pugixml
+  GIT_REPOSITORY https://github.com/zeux/pugixml.git
+  GIT_TAG v1.12.1
+)
+message(STATUS "Making available pugixml...")
+FetchContent_MakeAvailable(pugixml)
+# Adds pugixml::static
 
 add_subdirectory(assets)
 

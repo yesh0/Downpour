@@ -3,6 +3,7 @@ add_executable(downpour
   assets.cc
   nine_patch.cc
   particle_batch.cc
+  tiled.cc
 )
 
 add_dependencies(downpour embed_files)
