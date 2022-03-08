@@ -42,6 +42,15 @@ struct TiledWorldDef {
   } rainDef;
 };
 
+class TiledContactFilter : public b2ContactFilter {
+public:
+  bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB);
+  bool ShouldCollide(b2Fixture *fixture, b2ParticleSystem *particleSystem,
+                     int32 particleIndex);
+  bool ShouldCollide(b2ParticleSystem *particleSystem, int32 particleIndexA,
+                     int32 particleIndexB);
+};
+
 class TiledWorld : public sf::Drawable, public sf::Transformable {
 private:
   std::random_device randomDevice;
@@ -49,6 +58,7 @@ private:
   std::uniform_real_distribution<> uniform;
   AssetManager &manager;
   BundledTexture textureBundle;
+  TiledContactFilter filter;
   b2World world;
   B2Loader b2Loader;
   TiledLoader tiledLoader;

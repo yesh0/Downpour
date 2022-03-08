@@ -34,11 +34,11 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
     auto scale = renDef.drawPPM / renDef.texturePPM;
     auto &rect = sprite.getTextureRect();
     sprite.setOrigin(Vector2f(rect.width * 0.5, rect.height * 0.5));
-    sprite.setScale(
-        Vector2f(p.second.w * scale / rect.width,
-                 p.second.h * scale / rect.height));
+    sprite.setScale(Vector2f(p.second.w * scale / rect.width,
+                             p.second.h * scale / rect.height));
     b2Sprites.push_back(sprite);
   }
+  world.SetContactFilter(&filter);
 }
 
 void TiledWorld::step(float time) {
@@ -49,6 +49,7 @@ void TiledWorld::step(float time) {
       dropCount++;
     }
     b2ParticleDef pd;
+    pd.flags |= b2_fixtureContactFilterParticle;
     pd.lifetime = rainDef.rainLifetime;
     pd.velocity = rainDef.rainVelocity / renDef.texturePPM;
     pd.velocity *= (2 * uniform(rng) - 1) * rainDef.rainVelocityRandom + 1;
@@ -62,14 +63,29 @@ void TiledWorld::step(float time) {
     }
   }
   world.Step(time, 6, 2);
+  auto &joints = b2Loader.getJoints();
+  auto prev = joints.before_begin();
+  for (auto i = joints.begin(); i != joints.end();) {
+    auto force = i->first->GetReactionForce(1).LengthSquared();
+    if (force > i->second * i->second) {
+      world.DestroyJoint(i->first);
+      i++;
+      joints.erase_after(prev);
+    } else {
+      prev = i;
+      i++;
+    }
+  }
 }
 
 void TiledWorld::prepare() {
   particleBatch.update();
   auto &textured = b2Loader.getInfo().texturedObjects;
   for (int i = 0; i != textured.size(); ++i) {
-    auto position = textured[i].first->GetPosition() * renDef.drawPPM;
+    auto body = textured[i].first;
+    auto position = body->GetPosition() * renDef.drawPPM;
     b2Sprites[i].setPosition(Vector2f(position.x, position.y));
+    b2Sprites[i].setRotation(sf::radians(body->GetAngle()));
   }
 }
 
@@ -85,3 +101,19 @@ void TiledWorld::draw(sf::RenderTarget &target,
 }
 
 TiledWorldDef::RainDef &TiledWorld::getRainDef() { return rainDef; }
+
+bool TiledContactFilter::ShouldCollide(b2Fixture *fixture,
+                                       b2ParticleSystem *particleSystem,
+                                       int32 particleIndex) {
+  return fixture->GetFilterData().groupIndex >= 0;
+}
+
+bool TiledContactFilter::ShouldCollide(b2Fixture *fixtureA,
+                                       b2Fixture *fixtureB) {
+  return true;
+}
+bool TiledContactFilter::ShouldCollide(b2ParticleSystem *particleSystem,
+                                       int32 particleIndexA,
+                                       int32 particleIndexB) {
+  return true;
+}
