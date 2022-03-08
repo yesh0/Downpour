@@ -11,11 +11,11 @@ private:
   std::vector<sf::Vertex> vertices;
   b2ParticleSystem *system;
   sf::Sprite sprite;
-  sf::Transform transform;
   float overlap;
+  float ratio;
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 public:
-  ParticleBatch(b2ParticleSystem *system, sf::Sprite sprite);
+  ParticleBatch(b2ParticleSystem *system, sf::Sprite sprite, float ratio);
   void update();
   void setOverlap(float o);
 };

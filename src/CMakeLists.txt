@@ -1,6 +1,7 @@
 add_executable(downpour
   main.cc
   assets.cc
+  b2_tiled.cc
   nine_patch.cc
   particle_batch.cc
   tiled.cc

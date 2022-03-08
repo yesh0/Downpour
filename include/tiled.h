@@ -9,6 +9,7 @@
 #include "pugixml.hpp"
 
 #include "asset_manager.h"
+#include "b2_tiled.h"
 
 class TiledMap;
 
@@ -32,7 +33,7 @@ private:
 
 public:
   TiledLoader(AssetManager &manager);
-  TiledMap load(std::string filename);
+  TiledMap load(std::string filename, B2Loader &b2Loader);
 };
 
 class TiledLayer : public sf::Drawable, public sf::Transformable {

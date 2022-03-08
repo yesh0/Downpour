@@ -5,6 +5,7 @@
 #include "pugixml.hpp"
 
 #include "tiled.h"
+#include "b2_tiled.h"
 
 using namespace pugi;
 using namespace std;
@@ -115,7 +116,7 @@ static void parseTileData(const string &data, vector<size_t> &tiles) {
   }
 }
 
-TiledMap TiledLoader::load(std::string filename) {
+TiledMap TiledLoader::load(std::string filename, B2Loader &b2Loader) {
   auto file = assets.getData(filename);
   xml_document tmx;
   tmx.load_buffer(file->data, file->size);
@@ -154,6 +155,7 @@ TiledMap TiledLoader::load(std::string filename) {
                             usedSets, textures);
       }
     }
+    b2Loader.load(mapNode);
     return TiledMap(std::move(layers));
   } else {
     return TiledMap{};
