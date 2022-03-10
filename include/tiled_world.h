@@ -6,6 +6,7 @@
 
 #include "Box2D/Box2D.h"
 #include "SFML/Graphics.hpp"
+#include "SFML/System/Clock.hpp"
 #include "asset_manager.h"
 #include "tiled.h"
 #include "b2_tiled.h"
@@ -23,6 +24,7 @@ struct TiledWorldDef {
      * rainScale: scales textures of each rain drop
      */
     float texturePPM, drawPPM, rainScale;
+    size_t screenW, screenH;
   } rendering;
   b2ParticleSystemDef particleSystemDef;
   b2Vec2 gravity;
@@ -53,9 +55,13 @@ public:
 
 class TiledWorld : public sf::Drawable, public sf::Transformable {
 private:
+  sf::Clock clock;
   std::random_device randomDevice;
   std::mt19937 rng;
   std::uniform_real_distribution<> uniform;
+  sf::RenderTexture shaderPass;
+  sf::RenderTexture backgroundPass;
+  sf::Shader rainShader;
   AssetManager &manager;
   BundledTexture textureBundle;
   TiledContactFilter filter;

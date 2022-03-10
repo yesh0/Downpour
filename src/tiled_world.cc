@@ -1,4 +1,5 @@
 #include <cmath>
+#include <exception>
 #include <vector>
 
 #include "tiled_world.h"
@@ -28,6 +29,13 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
   particleBatch.setOverlap(renDef.rainScale);
   float scale = renDef.drawPPM / renDef.texturePPM;
   map.setScale(Vector2f(scale, scale));
+  auto shaderFile = manager.getData("rain.glsl");
+  if (!shaderPass.create(renDef.screenW, renDef.screenH) ||
+      !backgroundPass.create(renDef.screenW, renDef.screenH) ||
+      !rainShader.loadFromMemory((const char *)shaderFile->data,
+                                 Shader::Type::Fragment)) {
+    throw runtime_error("Give up");
+  }
   auto &todoInfo = b2Loader.getInfo();
   for (auto &p : todoInfo.texturedObjects) {
     auto sprite = textureBundle.getSprite(p.second.name);
@@ -87,17 +95,26 @@ void TiledWorld::prepare() {
     b2Sprites[i].setPosition(Vector2f(position.x, position.y));
     b2Sprites[i].setRotation(sf::radians(body->GetAngle()));
   }
+  RenderStates mine;
+  mine.transform = getTransform();
+  shaderPass.clear(Color::Transparent);
+  shaderPass.draw(particleBatch, mine);
+  shaderPass.display();
+  backgroundPass.clear(Color::Transparent);
+  backgroundPass.draw(map, mine);
+  for (auto &sprite : b2Sprites) {
+    backgroundPass.draw(sprite, mine);
+  }
+  backgroundPass.display();
+  rainShader.setUniform("background", backgroundPass.getTexture());
+  rainShader.setUniform("screenColorBuffer", rainShader.CurrentTexture);
+  rainShader.setUniform("t", clock.getElapsedTime().asSeconds());
 }
 
 void TiledWorld::draw(sf::RenderTarget &target,
                       const sf::RenderStates &states) const {
-  RenderStates mine(states);
-  mine.transform *= getTransform();
-  target.draw(map, mine);
-  for (auto &sprite : b2Sprites) {
-    target.draw(sprite, mine);
-  }
-  target.draw(particleBatch, mine);
+  Sprite shaderPassSprite(shaderPass.getTexture());
+  target.draw(shaderPassSprite, &rainShader);
 }
 
 TiledWorldDef::RainDef &TiledWorld::getRainDef() { return rainDef; }
