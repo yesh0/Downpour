@@ -1,11 +1,13 @@
 #include <map>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #include "pugixml.hpp"
 
 #include "tiled.h"
 #include "b2_tiled.h"
+#include "util.h"
 
 using namespace pugi;
 using namespace std;
@@ -108,7 +110,7 @@ static void parseTileData(const string &data, vector<size_t> &tiles) {
   for (size_t i = 0; i < data.size(); ++i) {
     try {
       size_t offset;
-      size_t tile = stol(data.substr(i), &offset);
+      size_t tile = svtov<size_t>(string_view{data}.substr(i), offset);
       tiles.push_back(tile);
       i += offset;
     } catch (...) {

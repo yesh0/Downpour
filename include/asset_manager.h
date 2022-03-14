@@ -17,7 +17,7 @@ struct AssetInfo {
 
 class AssetManager {
 public:
-  virtual const AssetInfo *getData(std::string name) const;
+  virtual const AssetInfo *getData(const std::string &name) const;
 };
 
 class BuiltInAssetManager : public AssetManager {
@@ -27,7 +27,7 @@ private:
 
 public:
   BuiltInAssetManager();
-  const AssetInfo *getData(std::string name) const;
+  const AssetInfo *getData(const std::string &name) const;
 };
 
 class BundledTexture {
@@ -47,9 +47,9 @@ private:
                            const int *size, const int *split);
 
 public:
-  BundledTexture(std::string filename, AssetManager &manager);
-  sf::Sprite getSprite(std::string name);
-  NinePatchSprite getNinePatch(std::string name);
+  BundledTexture(const std::string &filename, AssetManager &manager);
+  sf::Sprite getSprite(const std::string &name);
+  NinePatchSprite getNinePatch(const std::string &name);
 };
 
 #endif /* !ASSET_MANAGER_H */

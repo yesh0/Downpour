@@ -1,16 +1,18 @@
 #include <cstring>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 #include "SFML/Graphics.hpp"
 
 #include "asset_manager.h"
+#include "util.h"
 #define IMPORT_BUILTIN_ASSETS
 #include "builtin_assets.cc"
 
 using namespace std;
 
-const AssetInfo *AssetManager::getData(std::string name) const {
+const AssetInfo *AssetManager::getData(const std::string &name) const {
   return nullptr;
 }
 
@@ -20,17 +22,17 @@ BuiltInAssetManager::BuiltInAssetManager() {
   }
 }
 
-const AssetInfo *BuiltInAssetManager::getData(std::string name) const {
+const AssetInfo *BuiltInAssetManager::getData(const std::string &name) const {
   return assetMap.at(name);
 }
 
-bool parseArray(string text, int *array, size_t count) {
+bool parseArray(const string_view &text, int *array, size_t count) {
   size_t i = 0;
   size_t next = text.find(',');
   do {
     try {
-      *array =
-          stoi(text.substr(i, next == string::npos ? string::npos : next - i));
+      *array = svtov<int>(string_view{text}.substr(
+          i, next == string::npos ? string::npos : next - i));
     } catch (...) {
       return false;
     }
@@ -42,7 +44,7 @@ bool parseArray(string text, int *array, size_t count) {
   return true;
 }
 
-BundledTexture::BundledTexture(std::string filename, AssetManager &manager)
+BundledTexture::BundledTexture(const std::string &filename, AssetManager &manager)
     : filename(filename), manager(manager) {
   string atlas((const char *)manager.getData(filename)->data);
   stringstream ss(atlas);
@@ -71,13 +73,20 @@ BundledTexture::BundledTexture(std::string filename, AssetManager &manager)
     } else if (line[0] == ' ') {
       /* Properties of a region */
       size_t i = line.find(':');
-      string key = line.substr(2, i - 2);
+      string_view l{line};
+      string_view key = l.substr(2, i - 2);
       if (key == "xy") {
-        parseArray(line.substr(i + 1), xy, 2);
+        if (!parseArray(l.substr(i + 1), xy, 2)) {
+          throw runtime_error("Internal file corruption");
+        }
       } else if (key == "size") {
-        parseArray(line.substr(i + 1), size, 2);
+        if (!parseArray(l.substr(i + 1), size, 2)) {
+          throw runtime_error("Internal file corruption");
+        }
       } else if (key == "split") {
-        parseArray(line.substr(i + 1), split, 4);
+        if (!parseArray(l.substr(i + 1), split, 4)) {
+          throw runtime_error("Internal file corruption");
+        }
       }
     } else {
       /* Properties of a texture file
@@ -101,7 +110,7 @@ void BundledTexture::tryCommitRegionInfo(const std::string &textureFilename,
   }
 }
 
-sf::Sprite BundledTexture::getSprite(std::string name) {
+sf::Sprite BundledTexture::getSprite(const std::string &name) {
   try {
     const TextureRegion &region = textureRegions.at(name);
     auto pair = textures.try_emplace(region.filename);
@@ -123,7 +132,7 @@ sf::Sprite BundledTexture::getSprite(std::string name) {
   return sf::Sprite();
 }
 
-NinePatchSprite BundledTexture::getNinePatch(std::string name) {
+NinePatchSprite BundledTexture::getNinePatch(const std::string &name) {
   getSprite(name);
   const TextureRegion &region = textureRegions.at(name);
   auto &texture = textures.at(region.filename);
