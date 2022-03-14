@@ -1,6 +1,7 @@
 #ifndef ASSET_MANAGER_H
 #define ASSET_MANAGER_H
 
+#include <filesystem>
 #include <map>
 #include <unordered_map>
 #include <string>
@@ -17,7 +18,7 @@ struct AssetInfo {
 
 class AssetManager {
 public:
-  virtual const AssetInfo *getData(const std::string &name) const;
+  virtual const AssetInfo *getData(const std::string &name);
 };
 
 class BuiltInAssetManager : public AssetManager {
@@ -27,7 +28,27 @@ private:
 
 public:
   BuiltInAssetManager();
-  const AssetInfo *getData(const std::string &name) const;
+  const AssetInfo *getData(const std::string &name);
+};
+
+/**
+ * @brief Testing purpose file provider
+ *
+ * All file contents are cached
+ */
+class FilesystemAssetManager : public AssetManager {
+private:
+  static void deleteInfo(AssetInfo *info);
+  typedef std::unique_ptr<AssetInfo, decltype(&deleteInfo)> Ptr;
+  typedef std::map<const std::string,
+                   Ptr>
+      AssetMap;
+  AssetMap assetMap;
+  std::filesystem::path dir;
+
+public:
+  FilesystemAssetManager(const std::string &assetDir);
+  const AssetInfo *getData(const std::string &name);
 };
 
 class BundledTexture {
@@ -39,7 +60,7 @@ private:
     int split[4];
   };
   const std::string filename;
-  const AssetManager &manager;
+  AssetManager &manager;
   std::unordered_map<std::string, sf::Texture> textures;
   std::map<std::string, TextureRegion> textureRegions;
   void tryCommitRegionInfo(const std::string &textureFilename,

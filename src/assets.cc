@@ -1,4 +1,5 @@
 #include <cstring>
+#include <fstream>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -12,7 +13,7 @@
 
 using namespace std;
 
-const AssetInfo *AssetManager::getData(const std::string &name) const {
+const AssetInfo *AssetManager::getData(const std::string &name) {
   return nullptr;
 }
 
@@ -22,8 +23,37 @@ BuiltInAssetManager::BuiltInAssetManager() {
   }
 }
 
-const AssetInfo *BuiltInAssetManager::getData(const std::string &name) const {
+const AssetInfo *BuiltInAssetManager::getData(const std::string &name) {
   return assetMap.at(name);
+}
+
+void FilesystemAssetManager::deleteInfo(AssetInfo *info) {
+  delete info->data;
+  delete info->name;
+  delete info;
+}
+
+FilesystemAssetManager::FilesystemAssetManager(const std::string &assetDir)
+    : dir(assetDir) {}
+const AssetInfo *FilesystemAssetManager::getData(const std::string &name) {
+  auto i = assetMap.find(name);
+  if (i == assetMap.end()) {
+    auto file{dir};
+    file.append(name);
+    auto nameAlloc = new char[name.size() + 1];
+    memcpy(nameAlloc, name.data(), name.size());
+    nameAlloc[name.size()] = '\0';
+    auto size = filesystem::file_size(file);
+    auto data = new unsigned char[size];
+    ifstream f(file);
+    f.read((char *)data, size);
+    f.close();
+    auto info = new AssetInfo{nameAlloc, data, size};
+    assetMap.insert(make_pair(name, Ptr{info, &deleteInfo}));
+    return info;
+  } else {
+    return i->second.get();
+  }
 }
 
 bool parseArray(const string_view &text, int *array, size_t count) {
@@ -44,7 +74,8 @@ bool parseArray(const string_view &text, int *array, size_t count) {
   return true;
 }
 
-BundledTexture::BundledTexture(const std::string &filename, AssetManager &manager)
+BundledTexture::BundledTexture(const std::string &filename,
+                               AssetManager &manager)
     : filename(filename), manager(manager) {
   string atlas((const char *)manager.getData(filename)->data);
   stringstream ss(atlas);
