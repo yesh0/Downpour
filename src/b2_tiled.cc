@@ -54,10 +54,13 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
         auto texture =
             object.select_node(".//properties/property[@name='Texture']")
                 .node();
+        auto ninePatched =
+            object.select_node(".//properties/property[@name='NinePatched']")
+                .node();
         if (!texture.empty()) {
           info.texturedObjects.push_back(make_pair(
               body, B2WorldInfo::TextureInfo{texture.attribute("value").value(),
-                                             width, height}));
+                                             width, height, !ninePatched.empty()}));
         }
       } else {
         bd.position.Set(x * ratio, y * ratio);

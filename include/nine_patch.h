@@ -5,7 +5,7 @@
 
 #include "SFML/Graphics.hpp"
 
-class NinePatchSprite : public sf::Drawable, public sf::Transformable {
+class NinePatchSprite : public sf::Sprite {
 private:
   std::vector<sf::Vertex> vertices;
   sf::Vector2i size;

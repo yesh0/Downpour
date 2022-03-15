@@ -58,16 +58,16 @@ void NinePatchSprite::updateVertices() {
   const float xscale = (size.x - textureRect.width + center.width) / (float)center.width;
   const float yscale = (size.y - textureRect.height + center.height) / (float)center.width;
   const float xscaled[] = {
-      static_cast<float>(textureRect.left),
-      static_cast<float>(textureRect.left + center.left),
-      textureRect.left + center.left + center.width * xscale,
-      textureRect.left + textureRect.width + center.width * (xscale - 1),
+      static_cast<float>(0),
+      static_cast<float>(center.left),
+      center.left + center.width * xscale,
+      textureRect.width + center.width * (xscale - 1),
   };
   const float yscaled[] = {
-      static_cast<float>(textureRect.top),
-      static_cast<float>(textureRect.top + center.top),
-      textureRect.top + center.top + center.height * yscale,
-      textureRect.top + textureRect.height + center.width * (yscale - 1),
+      static_cast<float>(0),
+      static_cast<float>(center.top),
+      center.top + center.height * yscale,
+      textureRect.height + center.width * (yscale - 1),
   };
   this->vertices.resize(22);
   Vertex *vertices = this->vertices.data();

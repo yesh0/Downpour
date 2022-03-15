@@ -2,6 +2,8 @@
 #include <exception>
 #include <vector>
 
+#include "SFML/System.hpp"
+
 #include "tiled_world.h"
 
 using namespace sf;
@@ -30,21 +32,32 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
   float scale = renDef.drawPPM / renDef.texturePPM;
   map.setScale(Vector2f(scale, scale));
   auto shaderFile = manager.getData("rain.glsl");
+  sf::MemoryInputStream shaderStream;
+  shaderStream.open(shaderFile->data, shaderFile->size);
   if (!shaderPass.create(renDef.screenW, renDef.screenH) ||
       !backgroundPass.create(renDef.screenW, renDef.screenH) ||
-      !rainShader.loadFromMemory((const char *)shaderFile->data,
-                                 Shader::Type::Fragment)) {
+      !rainShader.loadFromStream(shaderStream, Shader::Type::Fragment)) {
     throw runtime_error("Give up");
   }
   auto &todoInfo = b2Loader.getInfo();
   for (auto &p : todoInfo.texturedObjects) {
-    auto sprite = textureBundle.getSprite(p.second.name);
-    auto scale = renDef.drawPPM / renDef.texturePPM;
-    auto &rect = sprite.getTextureRect();
-    sprite.setOrigin(Vector2f(rect.width * 0.5, rect.height * 0.5));
-    sprite.setScale(Vector2f(p.second.w * scale / rect.width,
-                             p.second.h * scale / rect.height));
-    b2Sprites.push_back(sprite);
+    if (p.second.ninePatched) {
+      auto sprite = textureBundle.getNinePatch(p.second.name);
+      float w = p.second.w, h = p.second.h;
+      sprite.setSize({(int)w, (int)h});
+      sprite.setOrigin({p.second.w * 0.5f, p.second.h * 0.5f});
+      sprite.setScale(Vector2f(scale, scale));
+      auto i = b2NinePatches.insert_after(b2NinePatches.before_begin(), sprite);
+      b2SpritePointers.push_back(&(*i));
+    } else {
+      auto sprite = textureBundle.getSprite(p.second.name);
+      auto &rect = sprite.getTextureRect();
+      sprite.setOrigin(Vector2f(rect.width * 0.5, rect.height * 0.5));
+      sprite.setScale(Vector2f(p.second.w * scale / rect.width,
+                               p.second.h * scale / rect.height));
+      auto i = b2Sprites.insert_after(b2Sprites.before_begin(), sprite);
+      b2SpritePointers.push_back(&(*i));
+    }
   }
   world.SetContactFilter(&filter);
 }
@@ -92,8 +105,8 @@ void TiledWorld::prepare() {
   for (int i = 0; i != textured.size(); ++i) {
     auto body = textured[i].first;
     auto position = body->GetPosition() * renDef.drawPPM;
-    b2Sprites[i].setPosition(Vector2f(position.x, position.y));
-    b2Sprites[i].setRotation(sf::radians(body->GetAngle()));
+    b2SpritePointers[i]->setPosition(Vector2f(position.x, position.y));
+    b2SpritePointers[i]->setRotation(sf::radians(body->GetAngle()));
   }
   RenderStates mine;
   mine.transform = getTransform();
@@ -102,8 +115,8 @@ void TiledWorld::prepare() {
   shaderPass.display();
   backgroundPass.clear(Color::Transparent);
   backgroundPass.draw(map, mine);
-  for (auto &sprite : b2Sprites) {
-    backgroundPass.draw(sprite, mine);
+  for (auto sprite : b2SpritePointers) {
+    backgroundPass.draw(*sprite, mine);
   }
   backgroundPass.display();
   rainShader.setUniform("background", backgroundPass.getTexture());

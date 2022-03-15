@@ -11,6 +11,7 @@
 #include "tiled.h"
 #include "b2_tiled.h"
 #include "particle_batch.h"
+#include "nine_patch.h"
 
 struct TiledWorldDef {
   std::string particleTexture;
@@ -71,7 +72,9 @@ private:
   TiledMap map;
   b2ParticleSystem *particleSystem;
   ParticleBatch particleBatch;
-  std::vector<sf::Sprite> b2Sprites;
+  std::vector<sf::Sprite*> b2SpritePointers;
+  std::forward_list<sf::Sprite> b2Sprites;
+  std::forward_list<NinePatchSprite> b2NinePatches;
   TiledWorldDef::RainDef rainDef;
   TiledWorldDef::RenDef renDef;
   void draw(sf::RenderTarget& target, const sf::RenderStates& states) const;

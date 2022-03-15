@@ -15,6 +15,7 @@ struct B2WorldInfo {
   struct TextureInfo {
     const std::string name;
     int w, h;
+    bool ninePatched;
   };
   std::vector<std::pair<b2Body*, TextureInfo>> texturedObjects;
 };
