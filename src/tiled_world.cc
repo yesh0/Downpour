@@ -130,6 +130,37 @@ void TiledWorld::draw(sf::RenderTarget &target,
   target.draw(shaderPassSprite, &rainShader);
 }
 
+void TiledWorld::query(b2Vec2 screenCoord, QueryCallback &callback) {
+  b2AABB aabb;
+  b2Vec2 worldCoord = screenCoord / renDef.drawPPM;
+  b2Vec2 d = b2Vec2{1, 1} / renDef.drawPPM;
+  aabb.lowerBound = worldCoord - d;
+  aabb.upperBound = worldCoord + d;
+  callback.setPPM(renDef.drawPPM);
+  world.QueryAABB(&callback, aabb);
+}
+
+QueryCallback::QueryCallback(b2Vec2 p) : p(p) {}
+
+void QueryCallback::setPPM(float ppm) {
+  this->ppm = ppm;
+}
+
+bool QueryCallback::ReportFixture(b2Fixture *fixture) {
+  auto data = fixture->GetBody()->GetUserData();
+  if (data != nullptr) {
+    if (fixture->TestPoint(p / ppm)) {
+      return callback(*(const string*) data);
+    }
+  }
+  return true;
+}
+
+bool QueryCallback::ShouldQueryParticleSystem(
+    const b2ParticleSystem *particleSystem) {
+  return false;
+}
+
 TiledWorldDef::RainDef &TiledWorld::getRainDef() { return rainDef; }
 
 bool TiledContactFilter::ShouldCollide(b2Fixture *fixture,

@@ -54,6 +54,18 @@ public:
                      int32 particleIndexB);
 };
 
+class QueryCallback : public b2QueryCallback {
+protected:
+  const b2Vec2 p;
+  float ppm;
+  QueryCallback(b2Vec2 p);
+public:
+  virtual bool callback(const std::string &name) = 0;
+  bool ReportFixture(b2Fixture* fixture);
+  bool ShouldQueryParticleSystem(const b2ParticleSystem* particleSystem);
+  void setPPM(float ppm);
+};
+
 class TiledWorld : public sf::Drawable, public sf::Transformable {
 private:
   sf::Clock clock;
@@ -91,6 +103,7 @@ public:
    */
   void prepare();
   TiledWorldDef::RainDef &getRainDef();
+  void query(b2Vec2 screenCoord, QueryCallback &callback);
 };
 
 #endif /* !TILED_WORLD_H */

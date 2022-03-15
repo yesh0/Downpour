@@ -30,7 +30,8 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
         if (next == string::npos) {
           next = pointsString.size();
         }
-        b2Vec2 point = b2Vec2FromString(string_view{pointsString}.substr(i, next - i));
+        b2Vec2 point =
+            b2Vec2FromString(string_view{pointsString}.substr(i, next - i));
         vertices.push_back(point * ratio);
         i = next;
       }
@@ -59,16 +60,18 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
                 .node();
         if (!texture.empty()) {
           info.texturedObjects.push_back(make_pair(
-              body, B2WorldInfo::TextureInfo{texture.attribute("value").value(),
-                                             width, height, !ninePatched.empty()}));
+              body,
+              B2WorldInfo::TextureInfo{texture.attribute("value").value(),
+                                       width, height, !ninePatched.empty()}));
         }
       } else {
         bd.position.Set(x * ratio, y * ratio);
         body = world.CreateBody(&bd);
       }
       if (!object.attribute("name").empty()) {
-        namedObjects.insert(
+        auto i = namedObjects.insert(
             make_pair(string(object.attribute("name").value()), body));
+        body->SetUserData((void*) &(i.first->first));
       }
     }
   }
@@ -98,8 +101,8 @@ void B2Loader::load(const pugi::xml_node &node) {
         jointsProperty.select_node(".//properties/property[@name='Joints']")
             .node();
     string_view jointDefs(property.attribute("value").empty()
-                         ? property.child_value()
-                         : property.attribute("value").value());
+                              ? property.child_value()
+                              : property.attribute("value").value());
     for (int i = 0; i < jointDefs.size(); ++i) {
       auto next = jointDefs.find('\n', i);
       if (next == string::npos) {
@@ -134,21 +137,22 @@ static void split(const string_view &s, char c, vector<string_view> &output) {
   }
 }
 
-std::pair<b2Joint*, float> B2Loader::parseJointIntoWorld(const std::string_view &jointDef) {
+std::pair<b2Joint *, float>
+B2Loader::parseJointIntoWorld(const std::string_view &jointDef) {
   vector<string_view> args;
   split(jointDef, ' ', args);
   if (args[0] == "Distance") {
     b2DistanceJointDef djd;
-    djd.bodyA = namedObjects.find(args[1])->second;
-    djd.bodyB = namedObjects.find(args[2])->second;
+    djd.bodyA = namedObjects.find(string{args[1]})->second;
+    djd.bodyB = namedObjects.find(string{args[2]})->second;
     djd.length = svtov<float>(args[3]) * ratio;
     djd.localAnchorA.Set(0, 0);
     djd.localAnchorB = b2Vec2FromString(args[4]) * ratio;
     return make_pair(world.CreateJoint(&djd), svtov<float>(args[5]));
   } else if (args[0] == "Rope") {
     b2RopeJointDef rjd;
-    rjd.bodyA = namedObjects.find(args[1])->second;
-    rjd.bodyB = namedObjects.find(args[2])->second;
+    rjd.bodyA = namedObjects.find(string{args[1]})->second;
+    rjd.bodyB = namedObjects.find(string{args[2]})->second;
     rjd.maxLength = svtov<float>(args[3]) * ratio;
     rjd.localAnchorA.Set(0, 0);
     rjd.localAnchorB = b2Vec2FromString(args[4]) * ratio;
