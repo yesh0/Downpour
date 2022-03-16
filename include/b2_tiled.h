@@ -2,6 +2,7 @@
 #define B2_TILED_H
 
 #include <map>
+#include <unordered_map>
 #include <vector>
 #include <string>
 #include <forward_list>
@@ -24,7 +25,7 @@ class B2Loader {
 private:
   B2WorldInfo info;
   b2World &world;
-  std::map<std::string, b2Body*, std::less<>> namedObjects;
+  std::unordered_map<std::string, b2Body*> namedObjects;
   std::forward_list<std::pair<b2Joint*, float>> joints;
   const float ratio;
   void loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd);
