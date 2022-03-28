@@ -4,15 +4,14 @@
 #include <memory>
 #include <string>
 
-#include "asset_manager.h"
+#include "forward_defs.h"
 #include "stage.h"
+#include "asset_manager.h"
 #include "tiled_world.h"
 
 class LevelStage : public Stage {
-private:
-  std::unique_ptr<TiledWorld> ui, level;
-
 protected:
+  std::unique_ptr<TiledWorld> ui, level;
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 
 public:

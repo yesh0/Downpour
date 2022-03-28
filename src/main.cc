@@ -36,9 +36,8 @@ int main() {
 #endif
   BundledTexture bt("TextureBundle.atlas", manager);
 
-  StageManager stageManager;
-  stageManager.push(unique_ptr<Stage>(
-      new LevelStage(stageManager, manager, "Level1.xml", rendering)));
+  StageManager stageManager(manager, rendering);
+  stageManager.push("Title");
 
   auto s = bt.getNinePatch("steel");
   s.setSize(Vector2i(9, 80));

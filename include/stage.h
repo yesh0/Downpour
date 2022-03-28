@@ -8,7 +8,10 @@
 
 #include "SFML/Graphics.hpp"
 
-class StageManager;
+#include "forward_defs.h"
+#include "asset_manager.h"
+#include "tiled_world.h"
+#include "levels.h"
 
 class Stage : public sf::Drawable {
 protected:
@@ -41,8 +44,12 @@ private:
       return a.first < b.first;
     }
   };
+  
   Stages stages;
+  AssetManager& assets;
+  const TiledWorldDef::RenDef& rendering;
   float time;
+  LevelConstructors levels;
   std::less<int> l;
   std::priority_queue<TimedStage, std::vector<TimedStage>, TimedStageLess>
       scheduledRemovals;
@@ -51,13 +58,16 @@ protected:
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 
 public:
-  StageManager();
+  StageManager(AssetManager&, const TiledWorldDef::RenDef&);
   void onStart();
   void onEnd();
   void step(float delta);
   void prepare(bool paused);
   bool onEvent(sf::Event &event);
   void push(std::unique_ptr<Stage> stage);
+  Stage *push(const std::string &name);
+  void unshift(std::unique_ptr<Stage> stage);
+  Stage *unshift(const std::string &name);
   void pop();
   void erase(Stage *stage);
   void erase(Stage *stage, float when);

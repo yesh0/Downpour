@@ -85,7 +85,7 @@ BundledTexture::BundledTexture(const std::string &filename,
   int xy[2];
   int size[2];
   int split[4];
-  while (std::getline(ss, line).good()) {
+  while (std::getline(ss, line)) {
     if (line.size() == 0) {
       tryCommitRegionInfo(textureFilename, regionName, xy, size, split);
       /* Marking a new texture file */
@@ -125,6 +125,7 @@ BundledTexture::BundledTexture(const std::string &filename,
        */
     }
   }
+  tryCommitRegionInfo(textureFilename, regionName, xy, size, split);
 }
 
 void BundledTexture::tryCommitRegionInfo(const std::string &textureFilename,
