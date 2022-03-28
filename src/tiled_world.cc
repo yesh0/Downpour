@@ -55,7 +55,7 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
   particleBatch.setOverlap(renDef.rainScale);
   float scale = renDef.drawPPM / renDef.texturePPM;
   map.setScale(Vector2f(scale, scale));
-  auto shaderFile = manager.getData("rain.glsl");
+  auto shaderFile = manager.getData(renDef.shader);
   sf::MemoryInputStream shaderStream;
   shaderStream.open(shaderFile->data, shaderFile->size);
   if (!shaderPass.create(renDef.screenW, renDef.screenH) ||
@@ -180,6 +180,7 @@ bool QueryCallback::ShouldQueryParticleSystem(
 }
 
 TiledWorldDef::RainDef &TiledWorld::getRainDef() { return rainDef; }
+TiledWorldDef::RenDef &TiledWorld::getRenDef() { return renDef; }
 
 bool TiledContactFilter::ShouldCollide(b2Fixture *fixture,
                                        b2ParticleSystem *particleSystem,

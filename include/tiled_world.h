@@ -27,6 +27,7 @@ struct TiledWorldDef {
      */
     float texturePPM, drawPPM, rainScale;
     size_t screenW, screenH;
+    std::string shader;
   } rendering;
   b2ParticleSystemDef particleSystemDef;
   b2Vec2 gravity;
@@ -109,6 +110,7 @@ public:
    */
   void prepare();
   TiledWorldDef::RainDef &getRainDef();
+  TiledWorldDef::RenDef &getRenDef();
   void query(b2Vec2 screenCoord, QueryCallback &callback);
   b2Body *findByName(const std::string &name);
   AnimatedSprite *findSpriteByName(const std::string &name);

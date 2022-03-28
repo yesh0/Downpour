@@ -23,6 +23,7 @@ public:
   void prepare(bool paused);
   bool onEvent(sf::Event &event);
   virtual void onClick(B2ObjectInfo &name);
+  virtual void onHover(sf::Vector2f position);
 };
 
 typedef LevelStage *(*LevelCreateFunc)(StageManager &manager,

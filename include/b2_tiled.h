@@ -27,6 +27,10 @@ struct B2WorldInfo {
 struct B2ObjectInfo {
   const std::string &name;
   const b2Body *body;
+  enum Type {
+    POLYGON, BOX, CIRCLE, POINT, NODE,
+  };
+  const Type type;
   sf::Sprite *sprite;
 };
 

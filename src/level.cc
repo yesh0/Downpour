@@ -36,6 +36,7 @@ static void loadRenDef(TiledWorldDef::RenDef &def, xml_node node) {
   auto ppm = node.child("scale");
   def.texturePPM = ppm.attribute("texture").as_float();
   def.rainScale = ppm.attribute("rain").as_float();
+  def.shader = node.child("shader").child_value();
 }
 
 static void loadRainDef(TiledWorldDef::RainDef &def, xml_node node) {
@@ -111,7 +112,8 @@ void LevelStage::prepare(bool paused) {
   ui->prepare();
 }
 
-void LevelStage::draw(sf::RenderTarget& target, const sf::RenderStates& states) const {
+void LevelStage::draw(sf::RenderTarget &target,
+                      const sf::RenderStates &states) const {
   target.draw(*level);
   target.draw(*ui);
 }
@@ -137,8 +139,11 @@ bool LevelStage::onEvent(sf::Event &event) {
         level->findByName(query.info->name);
       }
     }
+  } else if (event.type == Event::EventType::MouseMoved) {
+    onHover(Vector2f{(float)event.mouseMove.x, (float)event.mouseMove.y});
   }
   return false;
 }
 
 void LevelStage::onClick(B2ObjectInfo &name) {}
+void LevelStage::onHover(Vector2f position) {}

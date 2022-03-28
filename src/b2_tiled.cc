@@ -41,12 +41,15 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
       shape.Set(vertices.data(), vertices.size());
       body->CreateFixture(&shape, 1);
     }
-    if (!object.attribute("width").empty() || !object.child("point").empty()) {
+    if (object.attribute("width") || object.child("point")) {
+      B2ObjectInfo::Type type;
       b2Body *body;
+      auto textures =
+          object.select_node(".//properties/property[@name='Textures']").node();
       auto ellipse = object.select_node(".//ellipse");
-      if (ellipse || !object.attribute("width").empty()) {
-        int width = object.attribute("width").as_int(),
-            height = object.attribute("height").as_int();
+      if (object.attribute("width") || textures) {
+        int width = object.attribute("width").as_int(0),
+            height = object.attribute("height").as_int(0);
         float hWidth = width * 0.5, hHeight = height * 0.5;
         bd.position.Set((x + hWidth) * ratio, (y + hHeight) * ratio);
         body = world.CreateBody(&bd);
@@ -55,14 +58,22 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
                 .node()
                 .attribute("value")
                 .as_float(1);
-        if (ellipse) {
+        if (object.child("point")) {
+          b2CircleShape shape;
+          shape.m_radius = 3 * ratio;
+          body->CreateFixture(&shape, density);
+          width = height = 6;
+          type = B2ObjectInfo::Type::NODE;
+        } else if (ellipse) {
           b2CircleShape shape;
           shape.m_radius = hWidth * ratio;
           body->CreateFixture(&shape, density);
+          type = B2ObjectInfo::Type::CIRCLE;
         } else {
           b2PolygonShape shape;
           shape.SetAsBox(hWidth * ratio, hHeight * ratio);
           body->CreateFixture(&shape, density);
+          type = B2ObjectInfo::Type::BOX;
         }
         auto textures =
             object.select_node(".//properties/property[@name='Textures']")
@@ -105,12 +116,13 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
       } else {
         bd.position.Set(x * ratio, y * ratio);
         body = world.CreateBody(&bd);
+        type = B2ObjectInfo::Type::POINT;
       }
       if (!object.attribute("name").empty()) {
         auto i = namedObjects.insert(
             make_pair(string(object.attribute("name").value()), body));
         auto info = objectInfo.insert_after(objectInfo.before_begin(),
-                                            B2ObjectInfo{i.first->first, body});
+                                            B2ObjectInfo{i.first->first, body, type});
         body->SetUserData((void *)&(*info));
       }
     }
