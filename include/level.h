@@ -23,7 +23,7 @@ public:
   void step(float delta);
   void prepare(bool paused);
   bool onEvent(sf::Event &event);
-  virtual void onClick(const std::string &name);
+  virtual void onClick(B2ObjectInfo &name);
 };
 
 typedef LevelStage *(*LevelCreateFunc)(StageManager &manager,

@@ -1,8 +1,10 @@
 add_executable(downpour
   main.cc
+  animated_sprite.cc
   assets.cc
   b2_tiled.cc
   level.cc
+  levels.cc
   nine_patch.cc
   particle_batch.cc
   stage.cc

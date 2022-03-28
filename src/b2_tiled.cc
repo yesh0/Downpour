@@ -20,8 +20,8 @@ b2Vec2 b2Vec2FromString(const string_view &point) {
 
 void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
   for (auto object : group.children("object")) {
-    int x = stoi(object.attribute("x").value());
-    int y = stoi(object.attribute("y").value());
+    int x = object.attribute("x").as_int();
+    int y = object.attribute("y").as_int();
     for (auto poly : object.children("polygon")) {
       string pointsString{poly.attribute("points").value()};
       vector<b2Vec2> vertices;
@@ -43,26 +43,64 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
     }
     if (!object.attribute("width").empty() || !object.child("point").empty()) {
       b2Body *body;
-      if (!object.attribute("width").empty()) {
-        int width = stoi(object.attribute("width").value()),
-            height = stoi(object.attribute("height").value());
+      auto ellipse = object.select_node(".//ellipse");
+      if (ellipse || !object.attribute("width").empty()) {
+        int width = object.attribute("width").as_int(),
+            height = object.attribute("height").as_int();
         float hWidth = width * 0.5, hHeight = height * 0.5;
         bd.position.Set((x + hWidth) * ratio, (y + hHeight) * ratio);
         body = world.CreateBody(&bd);
-        b2PolygonShape shape;
-        shape.SetAsBox(hWidth * ratio, hHeight * ratio);
-        body->CreateFixture(&shape, 1);
-        auto texture =
-            object.select_node(".//properties/property[@name='Texture']")
+        float density =
+            object.select_node(".//properties/property[@name='Density']")
+                .node()
+                .attribute("value")
+                .as_float(1);
+        if (ellipse) {
+          b2CircleShape shape;
+          shape.m_radius = hWidth * ratio;
+          body->CreateFixture(&shape, density);
+        } else {
+          b2PolygonShape shape;
+          shape.SetAsBox(hWidth * ratio, hHeight * ratio);
+          body->CreateFixture(&shape, density);
+        }
+        auto textures =
+            object.select_node(".//properties/property[@name='Textures']")
                 .node();
+        auto textureCount =
+            object.select_node(".//properties/property[@name='TextureCount']")
+                .node()
+                .attribute("value")
+                .as_int();
         auto ninePatched =
             object.select_node(".//properties/property[@name='NinePatched']")
                 .node();
-        if (!texture.empty()) {
+        auto delay =
+            object.select_node(".//properties/property[@name='TextureDelay']")
+                .node();
+        if (textureCount > 0) {
+          vector<string_view> lines;
+          vector<string> names;
+          map<string, string> conditionals;
+          auto s = textures.attribute("value").empty()
+                       ? textures.child_value()
+                       : textures.attribute("value").value();
+          string_view sv{s};
+          split<>(sv, '\n', textureCount, lines);
+          for (auto &line : lines) {
+            auto sep = line.find('=');
+            if (sep == string_view::npos) {
+              names.emplace_back(line);
+            } else {
+              conditionals.insert(
+                  make_pair(line.substr(0, sep), line.substr(sep + 1)));
+            }
+          }
           info.texturedObjects.push_back(make_pair(
               body,
-              B2WorldInfo::TextureInfo{texture.attribute("value").value(),
-                                       width, height, !ninePatched.empty()}));
+              B2WorldInfo::TextureInfo{(names), conditionals, width, height,
+                                       !ninePatched.empty(),
+                                       delay.attribute("value").as_float(1)}));
         }
       } else {
         bd.position.Set(x * ratio, y * ratio);
@@ -71,7 +109,9 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
       if (!object.attribute("name").empty()) {
         auto i = namedObjects.insert(
             make_pair(string(object.attribute("name").value()), body));
-        body->SetUserData((void*) &(i.first->first));
+        auto info = objectInfo.insert_after(objectInfo.before_begin(),
+                                            B2ObjectInfo{i.first->first, body});
+        body->SetUserData((void *)&(*info));
       }
     }
   }
@@ -122,21 +162,6 @@ std::forward_list<std::pair<b2Joint *, float>> &B2Loader::getJoints() {
   return joints;
 }
 
-static void split(const string_view &s, char c, vector<string_view> &output) {
-  if (s.empty()) {
-    output.push_back(s);
-    return;
-  }
-  for (size_t i = 0; i < s.size(); ++i) {
-    size_t next = s.find(c, i);
-    if (next == string::npos) {
-      next = s.size();
-    }
-    output.push_back(s.substr(i, next - i));
-    i = next;
-  }
-}
-
 std::pair<b2Joint *, float>
 B2Loader::parseJointIntoWorld(const std::string_view &jointDef) {
   vector<string_view> args;
@@ -159,5 +184,14 @@ B2Loader::parseJointIntoWorld(const std::string_view &jointDef) {
     return make_pair(world.CreateJoint(&rjd), svtov<float>(args[5]));
   } else {
     return make_pair(nullptr, 0);
+  }
+}
+
+b2Body *B2Loader::findByName(const std::string &name) {
+  auto i = namedObjects.find(name);
+  if (i == namedObjects.end()) {
+    return nullptr;
+  } else {
+    return i->second;
   }
 }

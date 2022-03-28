@@ -5,8 +5,8 @@
 
 #include "pugixml.hpp"
 
-#include "tiled.h"
 #include "b2_tiled.h"
+#include "tiled.h"
 #include "util.h"
 
 using namespace pugi;
@@ -97,10 +97,10 @@ static TiledSet loadFromTSX(string filename, AssetManager &assets) {
   xml_document tsx;
   tsx.load_buffer(file->data, file->size);
   auto tilesetNode = tsx.child("tileset");
-  size_t tileWidth = stol(tilesetNode.attribute("tilewidth").value());
-  size_t tileHeight = stol(tilesetNode.attribute("tileheight").value());
-  size_t columns = stol(tilesetNode.attribute("columns").value());
-  size_t rows = stol(tilesetNode.attribute("tilecount").value()) / columns;
+  auto tileWidth = tilesetNode.attribute("tilewidth").as_uint(),
+       tileHeight = tilesetNode.attribute("tileheight").as_uint(),
+       columns = tilesetNode.attribute("columns").as_uint(),
+       rows = tilesetNode.attribute("tilecount").as_uint() / columns;
   return TiledSet{tilesetNode.child("image").attribute("source").value(),
                   tileWidth, tileHeight, columns, rows};
 }
@@ -127,26 +127,25 @@ TiledMap TiledLoader::load(std::string filename, B2Loader &b2Loader) {
   size_t columns, rows;
   if (string("left-down") == mapNode.attribute("renderorder").value()) {
     /* Map info */
-    size_t tileWidth = stol(mapNode.attribute("tilewidth").value());
-    size_t tileHeight = stol(mapNode.attribute("tileheight").value());
+    auto tileWidth = mapNode.attribute("tilewidth").as_uint();
+    auto tileHeight = mapNode.attribute("tileheight").as_uint();
 
     /* Gather tilesets */
     UsedSets usedSets;
     for (auto node : mapNode.children("tileset")) {
       auto tilesetFile = string(node.attribute("source").value());
-      addTileSet(tilesetFile, stol(node.attribute("firstgid").value()),
-                 usedSets);
+      addTileSet(tilesetFile, node.attribute("firstgid").as_uint(), usedSets);
     }
 
-    columns = stoi(mapNode.attribute("width").value());
-    rows = stoi(mapNode.attribute("height").value());
+    columns = mapNode.attribute("width").as_uint();
+    rows = mapNode.attribute("height").as_uint();
     /* Extract layers */
     vector<TiledLayer> layers;
     for (auto node : mapNode.children("layer")) {
-      size_t id = stol(node.attribute("id").value());
+      auto id = node.attribute("id").as_uint();
       string name(node.attribute("name").value());
-      size_t width = stol(node.attribute("width").value());
-      size_t height = stol(node.attribute("height").value());
+      auto width = node.attribute("width").as_uint();
+      auto height = node.attribute("height").as_uint();
       auto dataNode = node.child("data");
       if (string("csv") == dataNode.attribute("encoding").value()) {
         auto data = dataNode.child_value();
@@ -185,7 +184,8 @@ void TiledLoader::addTileSet(const std::string &name, size_t first,
 }
 
 TiledMap::TiledMap(std::vector<TiledLayer> &&layers) : layers(layers) {}
-void TiledMap::draw(sf::RenderTarget &target, const sf::RenderStates &states) const {
+void TiledMap::draw(sf::RenderTarget &target,
+                    const sf::RenderStates &states) const {
   RenderStates mine(states);
   mine.transform *= getTransform();
   for (auto &layer : layers) {

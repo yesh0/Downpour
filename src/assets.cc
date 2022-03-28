@@ -171,8 +171,8 @@ NinePatchSprite BundledTexture::getNinePatch(const std::string &name) {
   sf::IntRect rect(sf::Vector2i(region.x, region.y),
                    sf::Vector2i(region.size[0], region.size[1]));
   sf::IntRect reg(
-      sf::Vector2i(region.split[0], region.split[1]),
-      sf::Vector2i(region.size[0] - region.split[0] - region.split[2],
-                   region.size[1] - region.split[1] - region.split[3]));
+      sf::Vector2i(region.split[0], region.split[2]),
+      sf::Vector2i(region.size[0] - region.split[0] - region.split[1],
+                   region.size[1] - region.split[2] - region.split[3]));
   return NinePatchSprite(texture, rect, reg);
 }

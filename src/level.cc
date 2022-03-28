@@ -117,10 +117,10 @@ void LevelStage::draw(sf::RenderTarget& target, const sf::RenderStates& states) 
 }
 
 struct FirstQuery : public QueryCallback {
-  string name;
-  FirstQuery(b2Vec2 p) : QueryCallback(p) {}
-  bool callback(const string& name) {
-    this->name = name;
+  B2ObjectInfo *info;
+  FirstQuery(b2Vec2 p) : QueryCallback(p), info(nullptr) {}
+  bool callback(B2ObjectInfo &info) {
+    this->info = &info;
     return false;
   }
 };
@@ -131,13 +131,14 @@ bool LevelStage::onEvent(sf::Event &event) {
       b2Vec2 pos{static_cast<float32>(event.mouseButton.x),
                  static_cast<float32>(event.mouseButton.y)};
       FirstQuery query(pos);
-      ui->query(pos, query);
-      if (!query.name.empty()) {
-        onClick(query.name);
+      level->query(pos, query);
+      if (query.info != nullptr) {
+        onClick(*query.info);
+        level->findByName(query.info->name);
       }
     }
   }
   return false;
 }
 
-void LevelStage::onClick(const std::string &name) {}
+void LevelStage::onClick(B2ObjectInfo &name) {}

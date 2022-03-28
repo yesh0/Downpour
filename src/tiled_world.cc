@@ -15,6 +15,30 @@ static Sprite &centeredSprite(Sprite &&sprite) {
   return sprite;
 }
 
+sf::Sprite *TiledWorld::insertByName(const B2WorldInfo::TextureInfo &info,
+                                     const std::string &name, float scale,
+                                     bool ninePatched) {
+  Sprite *sp;
+  if (ninePatched) {
+    auto sprite = textureBundle.getNinePatch(name);
+    float w = info.w, h = info.h;
+    sprite.setSize({(int)w, (int)h});
+    sprite.setOrigin({info.w * 0.5f, info.h * 0.5f});
+    sprite.setScale(Vector2f(scale, scale));
+    auto i = b2NinePatches.insert_after(b2NinePatches.before_begin(), sprite);
+    sp = &*i;
+  } else {
+    auto sprite = textureBundle.getSprite(name);
+    auto &rect = sprite.getTextureRect();
+    sprite.setOrigin(Vector2f(rect.width * 0.5, rect.height * 0.5));
+    sprite.setScale(
+        Vector2f(info.w * scale / rect.width, info.h * scale / rect.height));
+    auto i = b2Sprites.insert_after(b2Sprites.before_begin(), sprite);
+    sp = &*i;
+  }
+  return sp;
+}
+
 TiledWorld::TiledWorld(const std::string &tiledFile,
                        const std::string &textureBundleFilename,
                        const TiledWorldDef &def, AssetManager &manager)
@@ -41,22 +65,18 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
   }
   auto &todoInfo = b2Loader.getInfo();
   for (auto &p : todoInfo.texturedObjects) {
-    if (p.second.ninePatched) {
-      auto sprite = textureBundle.getNinePatch(p.second.name);
-      float w = p.second.w, h = p.second.h;
-      sprite.setSize({(int)w, (int)h});
-      sprite.setOrigin({p.second.w * 0.5f, p.second.h * 0.5f});
-      sprite.setScale(Vector2f(scale, scale));
-      auto i = b2NinePatches.insert_after(b2NinePatches.before_begin(), sprite);
-      b2SpritePointers.push_back(&(*i));
-    } else {
-      auto sprite = textureBundle.getSprite(p.second.name);
-      auto &rect = sprite.getTextureRect();
-      sprite.setOrigin(Vector2f(rect.width * 0.5, rect.height * 0.5));
-      sprite.setScale(Vector2f(p.second.w * scale / rect.width,
-                               p.second.h * scale / rect.height));
-      auto i = b2Sprites.insert_after(b2Sprites.before_begin(), sprite);
-      b2SpritePointers.push_back(&(*i));
+    auto &anim = b2AnimatedSprites.emplace_back(p.second.delay);
+    for (auto &name : p.second.names) {
+      anim.push(insertByName(p.second, name, scale, p.second.ninePatched));
+    }
+    for (auto &cond : p.second.conditionals) {
+      anim.insert(cond.first, insertByName(p.second, cond.second, scale,
+                                           p.second.ninePatched));
+    }
+    auto body = p.first;
+    auto info = B2Loader::getInfo(body);
+    if (info != nullptr) {
+      info->sprite = &anim;
     }
   }
   world.SetContactFilter(&filter);
@@ -105,8 +125,8 @@ void TiledWorld::prepare() {
   for (int i = 0; i != textured.size(); ++i) {
     auto body = textured[i].first;
     auto position = body->GetPosition() * renDef.drawPPM;
-    b2SpritePointers[i]->setPosition(Vector2f(position.x, position.y));
-    b2SpritePointers[i]->setRotation(sf::radians(body->GetAngle()));
+    b2AnimatedSprites[i].setPosition(Vector2f(position.x, position.y));
+    b2AnimatedSprites[i].setRotation(sf::radians(body->GetAngle()));
   }
   RenderStates mine;
   mine.transform = getTransform();
@@ -115,8 +135,8 @@ void TiledWorld::prepare() {
   shaderPass.display();
   backgroundPass.clear(Color::Transparent);
   backgroundPass.draw(map, mine);
-  for (auto sprite : b2SpritePointers) {
-    backgroundPass.draw(*sprite, mine);
+  for (auto &sprite : b2AnimatedSprites) {
+    backgroundPass.draw(sprite, mine);
   }
   backgroundPass.display();
   rainShader.setUniform("background", backgroundPass.getTexture());
@@ -142,15 +162,13 @@ void TiledWorld::query(b2Vec2 screenCoord, QueryCallback &callback) {
 
 QueryCallback::QueryCallback(b2Vec2 p) : p(p) {}
 
-void QueryCallback::setPPM(float ppm) {
-  this->ppm = ppm;
-}
+void QueryCallback::setPPM(float ppm) { this->ppm = ppm; }
 
 bool QueryCallback::ReportFixture(b2Fixture *fixture) {
-  auto data = fixture->GetBody()->GetUserData();
+  auto data = B2Loader::getInfo(fixture->GetBody());
   if (data != nullptr) {
     if (fixture->TestPoint(p / ppm)) {
-      return callback(*(const string*) data);
+      return callback(*(B2ObjectInfo *)data);
     }
   }
   return true;
@@ -177,4 +195,13 @@ bool TiledContactFilter::ShouldCollide(b2ParticleSystem *particleSystem,
                                        int32 particleIndexA,
                                        int32 particleIndexB) {
   return true;
+}
+
+b2Body *TiledWorld::findByName(const std::string &name) {
+  return b2Loader.findByName(name);
+}
+
+AnimatedSprite *TiledWorld::findSpriteByName(const std::string &name) {
+  // TODO: use userData in b2Body
+  return (AnimatedSprite *)B2Loader::getInfo(b2Loader.findByName(name))->sprite;
 }

@@ -1,17 +1,18 @@
 #ifndef TILED_WORLD_H
 #define TILED_WORLD_H
 
-#include <string>
 #include <random>
+#include <string>
 
 #include "Box2D/Box2D.h"
 #include "SFML/Graphics.hpp"
 #include "SFML/System/Clock.hpp"
+#include "animated_sprite.h"
 #include "asset_manager.h"
-#include "tiled.h"
 #include "b2_tiled.h"
-#include "particle_batch.h"
 #include "nine_patch.h"
+#include "particle_batch.h"
+#include "tiled.h"
 
 struct TiledWorldDef {
   std::string particleTexture;
@@ -59,10 +60,11 @@ protected:
   const b2Vec2 p;
   float ppm;
   QueryCallback(b2Vec2 p);
+
 public:
-  virtual bool callback(const std::string &name) = 0;
-  bool ReportFixture(b2Fixture* fixture);
-  bool ShouldQueryParticleSystem(const b2ParticleSystem* particleSystem);
+  virtual bool callback(B2ObjectInfo &info) = 0;
+  bool ReportFixture(b2Fixture *fixture);
+  bool ShouldQueryParticleSystem(const b2ParticleSystem *particleSystem);
   void setPPM(float ppm);
 };
 
@@ -84,12 +86,16 @@ private:
   TiledMap map;
   b2ParticleSystem *particleSystem;
   ParticleBatch particleBatch;
-  std::vector<sf::Sprite*> b2SpritePointers;
   std::forward_list<sf::Sprite> b2Sprites;
   std::forward_list<NinePatchSprite> b2NinePatches;
+  std::vector<AnimatedSprite> b2AnimatedSprites;
+  std::map<std::string, std::size_t> namedSprites;
   TiledWorldDef::RainDef rainDef;
   TiledWorldDef::RenDef renDef;
-  void draw(sf::RenderTarget& target, const sf::RenderStates& states) const;
+  sf::Sprite *insertByName(const B2WorldInfo::TextureInfo &info,
+                           const std::string &name, float scale,
+                           bool ninePatched);
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 
 public:
   TiledWorld(const std::string &tiledFile,
@@ -104,6 +110,8 @@ public:
   void prepare();
   TiledWorldDef::RainDef &getRainDef();
   void query(b2Vec2 screenCoord, QueryCallback &callback);
+  b2Body *findByName(const std::string &name);
+  AnimatedSprite *findSpriteByName(const std::string &name);
 };
 
 #endif /* !TILED_WORLD_H */
