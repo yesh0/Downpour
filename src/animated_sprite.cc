@@ -25,7 +25,6 @@ AnimatedSprite::AnimatedSprite(float delay) : delay(delay), sprites(0) {}
 void AnimatedSprite::push(sf::Sprite *frame) { sprites.push_back(frame); }
 
 void AnimatedSprite::insert(const std::string &state, sf::Sprite *frame) {
-  sprites.push_back(frame);
   conditionals.insert(std::make_pair(state, frame));
 }
 

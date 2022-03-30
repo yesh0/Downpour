@@ -19,9 +19,14 @@ public:
     time += delta;
     if (time > 1) {
       level->getRainDef().rain = false;
-    } else if (time > 2) {
-      manager.erase(this);
+      if (time > 2) {
+        manager.erase(this);
+      }
     }
     LevelStage::step(delta);
+  }
+
+  bool onEvent(sf::Event &event) {
+    return true;
   }
 };

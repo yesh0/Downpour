@@ -17,21 +17,23 @@ struct B2WorldInfo {
   struct TextureInfo {
     const std::vector<std::string> names;
     const std::map<std::string, std::string> conditionals;
-    int w, h;
+    float w, h;
     bool ninePatched;
     float delay;
   };
   std::vector<std::pair<b2Body *, TextureInfo>> texturedObjects;
+  std::vector<b2Body *> nodes;
 };
 
 struct B2ObjectInfo {
   const std::string &name;
-  const b2Body *body;
+  b2Body * const body;
   enum Type {
     POLYGON, BOX, CIRCLE, POINT, NODE,
   };
   const Type type;
   sf::Sprite *sprite;
+  unsigned int collisionGroup;
 };
 
 class B2Loader {
@@ -49,9 +51,10 @@ private:
 public:
   B2Loader(b2World &world, float ratio);
   void load(const pugi::xml_node &node);
-  const B2WorldInfo &getInfo() const;
+  B2WorldInfo &getInfo();
   std::forward_list<std::pair<b2Joint *, float>> &getJoints();
   b2Body *findByName(const std::string &name);
+  B2ObjectInfo *bindObjectInfo(b2Body *body);
 
   inline static B2ObjectInfo *getInfo(b2Body *body) {
     return (B2ObjectInfo *)body->GetUserData();

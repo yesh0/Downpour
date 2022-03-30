@@ -93,9 +93,6 @@ private:
   std::map<std::string, std::size_t> namedSprites;
   TiledWorldDef::RainDef rainDef;
   TiledWorldDef::RenDef renDef;
-  sf::Sprite *insertByName(const B2WorldInfo::TextureInfo &info,
-                           const std::string &name, float scale,
-                           bool ninePatched);
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 
 public:
@@ -111,9 +108,17 @@ public:
   void prepare();
   TiledWorldDef::RainDef &getRainDef();
   TiledWorldDef::RenDef &getRenDef();
+  b2World &getWorld();
   void query(b2Vec2 screenCoord, QueryCallback &callback);
   b2Body *findByName(const std::string &name);
   AnimatedSprite *findSpriteByName(const std::string &name);
+  sf::Sprite *insertByName(const B2WorldInfo::TextureInfo &info,
+                           const std::string &name, float scale,
+                           bool ninePatched);
+  sf::Sprite *insertByName(const B2WorldInfo::TextureInfo &info,
+                           const std::string &name, bool ninePatched);
+  AnimatedSprite *bindSprite(b2Body *body);
+  const std::vector<b2Body *> &getNodes();
 };
 
 #endif /* !TILED_WORLD_H */

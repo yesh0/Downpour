@@ -64,6 +64,7 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
           body->CreateFixture(&shape, density);
           width = height = 6;
           type = B2ObjectInfo::Type::NODE;
+          info.nodes.push_back(body);
         } else if (ellipse) {
           b2CircleShape shape;
           shape.m_radius = hWidth * ratio;
@@ -109,7 +110,7 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
           }
           info.texturedObjects.push_back(make_pair(
               body,
-              B2WorldInfo::TextureInfo{(names), conditionals, width, height,
+              B2WorldInfo::TextureInfo{(names), conditionals, (float) width, (float) height,
                                        !ninePatched.empty(),
                                        delay.attribute("value").as_float(1)}));
         }
@@ -169,7 +170,7 @@ void B2Loader::load(const pugi::xml_node &node) {
   }
 }
 
-const B2WorldInfo &B2Loader::getInfo() const { return info; }
+B2WorldInfo &B2Loader::getInfo() { return info; }
 std::forward_list<std::pair<b2Joint *, float>> &B2Loader::getJoints() {
   return joints;
 }
@@ -206,4 +207,10 @@ b2Body *B2Loader::findByName(const std::string &name) {
   } else {
     return i->second;
   }
+}
+
+B2ObjectInfo *B2Loader::bindObjectInfo(b2Body *body) {
+  objectInfo.push_front({"_", body, B2ObjectInfo::Type::BOX, nullptr, 0});
+  body->SetUserData(&objectInfo.front());
+  return &objectInfo.front();
 }

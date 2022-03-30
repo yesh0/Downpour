@@ -22,8 +22,9 @@ public:
   void step(float delta);
   void prepare(bool paused);
   bool onEvent(sf::Event &event);
-  virtual void onClick(B2ObjectInfo &name);
-  virtual void onHover(sf::Vector2f position);
+  virtual bool onMousedown(B2ObjectInfo &name);
+  virtual bool onMouseup(B2ObjectInfo *name);
+  virtual bool onHover(sf::Vector2f position);
 };
 
 typedef LevelStage *(*LevelCreateFunc)(StageManager &manager,

@@ -128,22 +128,49 @@ struct FirstQuery : public QueryCallback {
 };
 
 bool LevelStage::onEvent(sf::Event &event) {
-  if (event.type == Event::EventType::MouseButtonPressed) {
+  switch (event.type) {
+  case sf::Event::MouseButtonPressed:
+    if (event.mouseButton.button == Mouse::Left) {
+      b2Vec2 pos{static_cast<float32>(event.mouseButton.x),
+                 static_cast<float32>(event.mouseButton.y)};
+      FirstQuery query(pos);
+      ui->query(pos, query);
+      if (query.info != nullptr) {
+        return onMousedown(*query.info);
+      } else {
+        level->query(pos, query);
+        if (query.info != nullptr) {
+          return onMousedown(*query.info);
+        }
+      }
+    }
+    return false;
+  case sf::Event::MouseButtonReleased:
     if (event.mouseButton.button == Mouse::Left) {
       b2Vec2 pos{static_cast<float32>(event.mouseButton.x),
                  static_cast<float32>(event.mouseButton.y)};
       FirstQuery query(pos);
       level->query(pos, query);
       if (query.info != nullptr) {
-        onClick(*query.info);
-        level->findByName(query.info->name);
+        return onMouseup(query.info);
+      } else {
+        level->query(pos, query);
+        if (query.info != nullptr) {
+          return onMouseup(query.info);
+        } else {
+          return onMouseup(nullptr);
+        }
       }
     }
-  } else if (event.type == Event::EventType::MouseMoved) {
-    onHover(Vector2f{(float)event.mouseMove.x, (float)event.mouseMove.y});
+    return false;
+  case sf::Event::MouseMoved:
+    return onHover(Vector2f{(float)event.mouseMove.x, (float)event.mouseMove.y});
+  default:
+    return false;
   }
   return false;
 }
 
-void LevelStage::onClick(B2ObjectInfo &name) {}
-void LevelStage::onHover(Vector2f position) {}
+bool LevelStage::onMousedown(B2ObjectInfo &name) { return false; }
+bool LevelStage::onMouseup(B2ObjectInfo *name) { return false; }
+bool LevelStage::onHover(Vector2f position) { return false; }

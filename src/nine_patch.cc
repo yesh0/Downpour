@@ -78,7 +78,12 @@ void NinePatchSprite::updateVertices() {
       updateHoritontalTriangleStrip(vertices, xs + 1, ys + 2, xscaled + 1, yscaled + 2, 3, 1, false);
 }
 
-void NinePatchSprite::setSize(const sf::Vector2i &size) {
+void NinePatchSprite::setSize(const sf::Vector2f &size) {
   this->size = size;
   updateVertices();
+}
+
+sf::FloatRect NinePatchSprite::getLocalBounds() const {
+  FloatRect rect{Vector2f(), Vector2f(size)};
+  return rect;
 }

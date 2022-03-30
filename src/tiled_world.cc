@@ -4,6 +4,7 @@
 
 #include "SFML/System.hpp"
 
+#include "b2_tiled.h"
 #include "tiled_world.h"
 
 using namespace sf;
@@ -16,14 +17,21 @@ static Sprite &centeredSprite(Sprite &&sprite) {
 }
 
 sf::Sprite *TiledWorld::insertByName(const B2WorldInfo::TextureInfo &info,
+                                     const std::string &name,
+                                     bool ninePatched) {
+  float scale = renDef.drawPPM / renDef.texturePPM;
+  return insertByName(info, name, scale, ninePatched);
+}
+
+sf::Sprite *TiledWorld::insertByName(const B2WorldInfo::TextureInfo &info,
                                      const std::string &name, float scale,
                                      bool ninePatched) {
   Sprite *sp;
   if (ninePatched) {
     auto sprite = textureBundle.getNinePatch(name);
     float w = info.w, h = info.h;
-    sprite.setSize({(int)w, (int)h});
-    sprite.setOrigin({info.w * 0.5f, info.h * 0.5f});
+    sprite.setSize({w, h});
+    sprite.setOrigin({w * 0.5f, h * 0.5f});
     sprite.setScale(Vector2f(scale, scale));
     auto i = b2NinePatches.insert_after(b2NinePatches.before_begin(), sprite);
     sp = &*i;
@@ -181,6 +189,7 @@ bool QueryCallback::ShouldQueryParticleSystem(
 
 TiledWorldDef::RainDef &TiledWorld::getRainDef() { return rainDef; }
 TiledWorldDef::RenDef &TiledWorld::getRenDef() { return renDef; }
+b2World &TiledWorld::getWorld() { return world; }
 
 bool TiledContactFilter::ShouldCollide(b2Fixture *fixture,
                                        b2ParticleSystem *particleSystem,
@@ -190,6 +199,15 @@ bool TiledContactFilter::ShouldCollide(b2Fixture *fixture,
 
 bool TiledContactFilter::ShouldCollide(b2Fixture *fixtureA,
                                        b2Fixture *fixtureB) {
+  auto a = B2Loader::getInfo(fixtureA->GetBody()),
+       b = B2Loader::getInfo(fixtureB->GetBody());
+  if (a != nullptr && b != nullptr) {
+    if ((a->collisionGroup & b->collisionGroup) == 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   return true;
 }
 bool TiledContactFilter::ShouldCollide(b2ParticleSystem *particleSystem,
@@ -203,6 +221,18 @@ b2Body *TiledWorld::findByName(const std::string &name) {
 }
 
 AnimatedSprite *TiledWorld::findSpriteByName(const std::string &name) {
-  // TODO: use userData in b2Body
   return (AnimatedSprite *)B2Loader::getInfo(b2Loader.findByName(name))->sprite;
+}
+
+AnimatedSprite *TiledWorld::bindSprite(b2Body *body) {
+  b2Loader.getInfo().texturedObjects.push_back(
+      make_pair(body, B2WorldInfo::TextureInfo{}));
+  auto info = b2Loader.bindObjectInfo(body);
+  auto &anim = b2AnimatedSprites.emplace_back(1);
+  info->sprite = &anim;
+  return &anim;
+}
+
+const std::vector<b2Body *> &TiledWorld::getNodes() {
+  return b2Loader.getInfo().nodes;
 }

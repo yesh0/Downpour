@@ -15,12 +15,15 @@ public:
     return new TitleLevel{manager, assets, rendering};
   }
 
-  void onClick(B2ObjectInfo &info) {
+  bool onMousedown(B2ObjectInfo &info) {
     if (info.name == "End" && !ended) {
       manager.push("Transition");
       manager.unshift("Level1");
       manager.erase(this, 1);
       ended = true;
+      return true;
+    } else {
+      return false;
     }
   }
 };
