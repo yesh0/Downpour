@@ -4,6 +4,7 @@ add_executable(downpour
   assets.cc
   b2_tiled.cc
   level.cc
+  level_base.cc
   levels.cc
   nine_patch.cc
   particle_batch.cc

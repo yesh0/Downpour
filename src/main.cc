@@ -17,8 +17,8 @@ using namespace std;
 using namespace sf;
 
 int main() {
-  RenderWindow window(VideoMode(640, 960, Style::Titlebar | Style::Close),
-                      "SFML Works!");
+  RenderWindow window(VideoMode(640, 960),
+                      "SFML Works!", Style::Titlebar | Style::Close);
   View view(FloatRect(Vector2f(0, 0), Vector2f(640, 960)));
   window.setView(view);
 
@@ -40,7 +40,7 @@ int main() {
   stageManager.push("Title");
 
   auto s = bt.getNinePatch("steel");
-  s.setSize(Vector2i(9, 80));
+  s.setSize({9, 80});
   s.rotate(sf::degrees(-45));
 
   size_t frames = 0;

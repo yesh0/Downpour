@@ -18,7 +18,7 @@ b2Vec2 b2Vec2FromString(const string_view &point) {
   }
 }
 
-void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
+void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd, std::list<b2Body*> *log) {
   for (auto object : group.children("object")) {
     int x = object.attribute("x").as_int();
     int y = object.attribute("y").as_int();
@@ -40,6 +40,9 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
       b2PolygonShape shape;
       shape.Set(vertices.data(), vertices.size());
       body->CreateFixture(&shape, 1);
+      if (log != nullptr) {
+        log->push_back(body);
+      }
     }
     if (object.attribute("width") || object.child("point")) {
       B2ObjectInfo::Type type;
@@ -110,7 +113,7 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
           }
           info.texturedObjects.push_back(make_pair(
               body,
-              B2WorldInfo::TextureInfo{(names), conditionals, (float) width, (float) height,
+              B2WorldInfo::TextureInfo{names, conditionals, (float) width, (float) height,
                                        !ninePatched.empty(),
                                        delay.attribute("value").as_float(1)}));
         }
@@ -126,26 +129,36 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd) {
                                             B2ObjectInfo{i.first->first, body, type});
         body->SetUserData((void *)&(*info));
       }
+      if (body != nullptr && log != nullptr) {
+        log->push_back(body);
+      }
     }
   }
 }
 
 B2Loader::B2Loader(b2World &world, float ratio) : world(world), ratio(ratio) {}
 void B2Loader::load(const pugi::xml_node &node) {
+  b2BodyDef bd;
   for (auto group : node.children("objectgroup")) {
     string type(group.attribute("name").value());
     if (type == "B2Dynamic") {
-      b2BodyDef bd;
       bd.type = b2_dynamicBody;
-      loadIntoWorld(group, bd);
+      loadIntoWorld(group, bd, nullptr);
     } else if (type == "B2Kinematic") {
-      b2BodyDef bd;
       bd.type = b2_kinematicBody;
-      loadIntoWorld(group, bd);
+      loadIntoWorld(group, bd, nullptr);
     } else if (type == "B2Static") {
-      b2BodyDef bd;
       bd.type = b2_staticBody;
-      loadIntoWorld(group, bd);
+      loadIntoWorld(group, bd, nullptr);
+    } else if (type == "Player") {
+      list<b2Body*> players;
+      bd.type = b2_dynamicBody;
+      loadIntoWorld(group, bd, &players);
+      if (players.size() >= 1) {
+        info.player = players.front();
+      } else {
+        info.player = nullptr;
+      }
     }
   }
   auto jointsProperty = node.find_child_by_attribute("name", "B2Joints");
@@ -209,8 +222,9 @@ b2Body *B2Loader::findByName(const std::string &name) {
   }
 }
 
+const static std::string placeholder = "_";
 B2ObjectInfo *B2Loader::bindObjectInfo(b2Body *body) {
-  objectInfo.push_front({"_", body, B2ObjectInfo::Type::BOX, nullptr, 0});
+  objectInfo.push_front({placeholder, body, B2ObjectInfo::Type::BOX, nullptr, 0});
   body->SetUserData(&objectInfo.front());
   return &objectInfo.front();
 }

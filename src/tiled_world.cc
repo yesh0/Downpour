@@ -6,6 +6,7 @@
 
 #include "b2_tiled.h"
 #include "tiled_world.h"
+#include "forward_defs.h"
 
 using namespace sf;
 using namespace std;
@@ -84,7 +85,8 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
     auto body = p.first;
     auto info = B2Loader::getInfo(body);
     if (info != nullptr) {
-      info->sprite = &anim;
+      info->world = this;
+      info->spriteId = b2AnimatedSprites.size() - 1;
     }
   }
   world.SetContactFilter(&filter);
@@ -190,6 +192,8 @@ bool QueryCallback::ShouldQueryParticleSystem(
 TiledWorldDef::RainDef &TiledWorld::getRainDef() { return rainDef; }
 TiledWorldDef::RenDef &TiledWorld::getRenDef() { return renDef; }
 b2World &TiledWorld::getWorld() { return world; }
+b2ParticleSystem &TiledWorld::getParticleSystem() { return *particleSystem; }
+b2Body *TiledWorld::getPlayer() { return b2Loader.getInfo().player; }
 
 bool TiledContactFilter::ShouldCollide(b2Fixture *fixture,
                                        b2ParticleSystem *particleSystem,
@@ -221,7 +225,7 @@ b2Body *TiledWorld::findByName(const std::string &name) {
 }
 
 AnimatedSprite *TiledWorld::findSpriteByName(const std::string &name) {
-  return (AnimatedSprite *)B2Loader::getInfo(b2Loader.findByName(name))->sprite;
+  return getSprite(B2Loader::getInfo(b2Loader.findByName(name))->spriteId);
 }
 
 AnimatedSprite *TiledWorld::bindSprite(b2Body *body) {
@@ -229,10 +233,13 @@ AnimatedSprite *TiledWorld::bindSprite(b2Body *body) {
       make_pair(body, B2WorldInfo::TextureInfo{}));
   auto info = b2Loader.bindObjectInfo(body);
   auto &anim = b2AnimatedSprites.emplace_back(1);
-  info->sprite = &anim;
+  info->world = this;
+  info->spriteId = b2AnimatedSprites.size() - 1;
   return &anim;
 }
 
 const std::vector<b2Body *> &TiledWorld::getNodes() {
   return b2Loader.getInfo().nodes;
 }
+
+AnimatedSprite *TiledWorld::getSprite(std::size_t id) { return &b2AnimatedSprites[id]; }

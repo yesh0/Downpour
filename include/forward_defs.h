@@ -5,5 +5,6 @@ class LevelStage;
 class Stage;
 class StageManager;
 class AssetManager;
+class TiledWorld;
 
 #endif /* !FORWARD_DEFS_H */

@@ -109,6 +109,8 @@ public:
   TiledWorldDef::RainDef &getRainDef();
   TiledWorldDef::RenDef &getRenDef();
   b2World &getWorld();
+  b2ParticleSystem &getParticleSystem();
+  b2Body *getPlayer();
   void query(b2Vec2 screenCoord, QueryCallback &callback);
   b2Body *findByName(const std::string &name);
   AnimatedSprite *findSpriteByName(const std::string &name);
@@ -119,6 +121,7 @@ public:
                            const std::string &name, bool ninePatched);
   AnimatedSprite *bindSprite(b2Body *body);
   const std::vector<b2Body *> &getNodes();
+  AnimatedSprite *getSprite(std::size_t id);
 };
 
 #endif /* !TILED_WORLD_H */

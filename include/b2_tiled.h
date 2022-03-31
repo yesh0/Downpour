@@ -7,11 +7,14 @@
 #include <string_view>
 #include <unordered_map>
 #include <vector>
+#include <list>
 
 #include "Box2D/Box2D.h"
 #include "SFML/Graphics.hpp"
 
 #include "pugixml.hpp"
+
+#include "forward_defs.h"
 
 struct B2WorldInfo {
   struct TextureInfo {
@@ -23,6 +26,7 @@ struct B2WorldInfo {
   };
   std::vector<std::pair<b2Body *, TextureInfo>> texturedObjects;
   std::vector<b2Body *> nodes;
+  b2Body *player;
 };
 
 struct B2ObjectInfo {
@@ -32,7 +36,8 @@ struct B2ObjectInfo {
     POLYGON, BOX, CIRCLE, POINT, NODE,
   };
   const Type type;
-  sf::Sprite *sprite;
+  TiledWorld *world;
+  std::size_t spriteId;
   unsigned int collisionGroup;
 };
 
@@ -44,7 +49,7 @@ private:
   std::forward_list<std::pair<b2Joint *, float>> joints;
   std::forward_list<B2ObjectInfo> objectInfo;
   const float ratio;
-  void loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd);
+  void loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd, std::list<b2Body*> *log);
   std::pair<b2Joint *, float>
   parseJointIntoWorld(const std::string_view &jointDef);
 
