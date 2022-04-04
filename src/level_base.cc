@@ -3,6 +3,13 @@
 using namespace sf;
 using namespace std;
 
+const char *LevelBase::PlayerState::MOOD_NAMES[4] = {
+    "happy",
+    "",
+    "awake",
+    "sad",
+};
+
 LevelBase::LevelBase(StageManager &manager, AssetManager &assets,
                      const LevelBaseDef &def,
                      const TiledWorldDef::RenDef &rendering)
@@ -31,6 +38,7 @@ LevelBase::LevelBase(StageManager &manager, AssetManager &assets,
     nodes.push_front({Vector2f{pos.x, pos.y}, 0, i});
   }
   player.anger = def.initialAnger;
+  player.mood = PlayerState::ASLEEP;
   player.lastHit.restart();
 }
 
@@ -178,18 +186,21 @@ void LevelBase::step(float delta) {
     auto playerBody = level->getPlayer();
     if (playerBody != nullptr) {
       auto info = B2Loader::getInfo(playerBody);
+      PlayerState::Mood next = player.mood;
       if (player.anger < 0) {
-        info->world->getSprite(info->spriteId)->set("happy");
-        onPlayerMood(PlayerState::HAPPY);
+        next = PlayerState::HAPPY;
       } else if (player.anger < def.angerThresholds[0]) {
-        info->world->getSprite(info->spriteId)->reset();
-        onPlayerMood(PlayerState::ASLEEP);
+        next = PlayerState::ASLEEP;
       } else if (player.anger < def.angerThresholds[1]) {
-        info->world->getSprite(info->spriteId)->set("awake");
-        onPlayerMood(PlayerState::AWAKE);
+        next = PlayerState::AWAKE;
       } else {
-        info->world->getSprite(info->spriteId)->set("sad");
-        onPlayerMood(PlayerState::SAD);
+        next = PlayerState::SAD;
+      }
+      if (next != player.mood) {
+        info->world->getSprite(info->spriteId)
+            ->set(PlayerState::MOOD_NAMES[next]);
+        player.mood = next;
+        onPlayerMood(next);
       }
     }
   }

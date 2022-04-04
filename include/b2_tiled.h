@@ -23,6 +23,7 @@ struct B2WorldInfo {
     float w, h;
     bool ninePatched;
     float delay;
+    sf::Vector2f offset;
   };
   std::vector<std::pair<b2Body *, TextureInfo>> texturedObjects;
   std::vector<b2Body *> nodes;

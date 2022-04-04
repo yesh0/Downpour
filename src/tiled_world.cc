@@ -82,6 +82,7 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
       anim.insert(cond.first, insertByName(p.second, cond.second, scale,
                                            p.second.ninePatched));
     }
+    anim.setOrigin(-p.second.offset * scale);
     auto body = p.first;
     auto info = B2Loader::getInfo(body);
     if (info != nullptr) {

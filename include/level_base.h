@@ -43,8 +43,10 @@ public:
     sf::Clock lastHit;
     long anger;
     enum Mood {
-      HAPPY, ASLEEP, AWAKE, SAD,
+      HAPPY = 0, ASLEEP = 1, AWAKE = 2, SAD = 3,
     };
+    Mood mood;
+    const static char* MOOD_NAMES[4];
   };
 
 protected:
