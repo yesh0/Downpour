@@ -5,6 +5,10 @@ using namespace std;
 class TitleLevel : public LevelStage {
 private:
   bool ended;
+  float time;
+  enum {
+    DELAYED, RAINING, TRANSITION,
+  } transitionState;
   TitleLevel(StageManager &manager, AssetManager &assets,
              const TiledWorldDef::RenDef &rendering)
       : LevelStage(manager, assets, "Title.xml", rendering), ended(false) {}
@@ -15,12 +19,36 @@ public:
     return new TitleLevel{manager, assets, rendering};
   }
 
+  void step(float delta) {
+    if (ended) {
+      time += delta;
+      switch (transitionState) {
+      case DELAYED:
+        if (time > 0.5) {
+          transitionState = RAINING;
+          level->getRainDef().rain = true;
+        }
+        break;
+      case RAINING:
+        if (time > 2.5) {
+          transitionState = TRANSITION;
+          manager.erase(this, 1);
+          manager.push("Transition");
+          manager.unshift("Level1");
+        }
+        break;
+      case TRANSITION:
+        break;
+      }
+    }
+    LevelStage::step(delta);
+  }
+
   bool onMousedown(B2ObjectInfo &info) {
-    if (info.name == "End" && !ended) {
-      manager.push("Transition");
-      manager.unshift("Level1");
-      manager.erase(this, 1);
+    if (info.name == "Start" && !ended) {
       ended = true;
+      time = 0;
+      transitionState = DELAYED;
       return true;
     } else {
       return false;

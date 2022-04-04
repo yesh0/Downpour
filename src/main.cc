@@ -24,8 +24,8 @@ int main() {
 
   TiledWorldDef::RenDef rendering;
   rendering.rainScale = 2.5;
-  rendering.texturePPM = 100;
-  rendering.drawPPM = 500;
+  rendering.texturePPM = 10;
+  rendering.drawPPM = 50;
   rendering.screenW = 640;
   rendering.screenH = 960;
 
@@ -34,14 +34,9 @@ int main() {
 #else
   FilesystemAssetManager manager("../assets/embedded");
 #endif
-  BundledTexture bt("TextureBundle.atlas", manager);
 
   StageManager stageManager(manager, rendering);
   stageManager.push("Title");
-
-  auto s = bt.getNinePatch("steel");
-  s.setSize({9, 80});
-  s.rotate(sf::degrees(-45));
 
   size_t frames = 0;
   while (window.isOpen()) {
@@ -59,7 +54,6 @@ int main() {
     stageManager.step(0.016);
     stageManager.prepare(false);
     window.draw(stageManager);
-    window.draw(s);
     window.display();
   }
   return 0;

@@ -43,13 +43,17 @@ public:
     sf::Clock lastHit;
     long anger;
     enum Mood {
-      HAPPY = 0, ASLEEP = 1, AWAKE = 2, SAD = 3,
+      HAPPY = 0,
+      ASLEEP = 1,
+      AWAKE = 2,
+      SAD = 3,
     };
     Mood mood;
-    const static char* MOOD_NAMES[4];
+    const static char *MOOD_NAMES[4];
   };
 
 protected:
+  LevelBaseDef def;
   State state;
   PlayerState player;
   BundledTexture bundle;
@@ -66,14 +70,14 @@ protected:
   void bindJoint(Plank &p, b2Body *body, float hw);
   std::pair<b2Body *, float> addBody(Plank &p);
   NodeList::iterator findNode(sf::Vector2f pos, float scale);
-  LevelBaseDef def;
-  std::list<b2Joint*> joints;
+  std::list<b2Joint *> joints;
 
 public:
   LevelBase(StageManager &manager, AssetManager &assets,
-            const LevelBaseDef &def, const TiledWorldDef::RenDef &rendering);
+            const std::string &config, const TiledWorldDef::RenDef &rendering);
   void prepare(bool paused);
   void step(float delta);
+  LevelBaseDef loadConfig();
   bool onEvent(sf::Event &event);
   bool onMousedown(B2ObjectInfo &name);
   bool onHover(sf::Vector2f position);

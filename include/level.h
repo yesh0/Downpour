@@ -12,6 +12,8 @@
 class LevelStage : public Stage {
 protected:
   std::unique_ptr<TiledWorld> ui, level;
+  pugi::xml_document doc;
+  pugi::xml_node root;
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 
 public:

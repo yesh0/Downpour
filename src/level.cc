@@ -87,9 +87,8 @@ LevelStage::LevelStage(StageManager &manager, AssetManager &assets,
                        const TiledWorldDef::RenDef &rendering)
     : Stage(manager) {
   auto info = assets.getData(config);
-  xml_document doc;
   doc.load_buffer(info->data, info->size);
-  auto root = doc.child("stage");
+  root = doc.child("stage");
   ui.reset(newTiledWorld(root.child("ui"), assets, rendering));
   level.reset(newTiledWorld(root.child("level"), assets, rendering));
 }

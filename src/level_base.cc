@@ -11,11 +11,11 @@ const char *LevelBase::PlayerState::MOOD_NAMES[4] = {
 };
 
 LevelBase::LevelBase(StageManager &manager, AssetManager &assets,
-                     const LevelBaseDef &def,
+                     const std::string &config,
                      const TiledWorldDef::RenDef &rendering)
-    : LevelStage(manager, assets, def.levelConfig, rendering),
+    : LevelStage(manager, assets, config, rendering), def(loadConfig()),
       bundle(def.textureBundle, assets),
-      sprite(bundle.getNinePatch(def.plankTexture)), clicked(false), def(def),
+      sprite(bundle.getNinePatch(def.plankTexture)), clicked(false),
       node(bundle.getSprite(def.nodeTexture)), state(ENDED) {
   float scale = level->getRenDef().drawPPM / level->getRenDef().texturePPM;
   sprite.setScale({scale, scale});
@@ -307,3 +307,23 @@ bool LevelBase::onHover(Vector2f position) {
 }
 
 void LevelBase::onPlayerMood(PlayerState::Mood mood) {}
+
+LevelBase::LevelBaseDef LevelBase::loadConfig() {
+  LevelBaseDef def;
+  auto config = root.child("config");
+  def.levelName = config.attribute("level").value();
+  def.levelConfig = config.attribute("xml").value();
+  def.textureBundle = config.attribute("bundle").value();
+  auto plank = config.child("plank");
+  def.plankDensity = plank.attribute("density").as_float(1);
+  def.plankWidth = plank.attribute("width").as_float(4);
+  def.plankTexture = plank.attribute("texture").value();
+  auto node = config.child("node");
+  def.nodeTexture = node.attribute("texture").value();
+  def.jointBreakageForceSq = config.attribute("joint-breakage").as_float(1);
+  auto player = config.child("player");
+  def.initialAnger = player.attribute("anger").as_int();
+  def.angerThresholds[0] = player.attribute("awake").as_int();
+  def.angerThresholds[1] = player.attribute("sad").as_int();
+  return def;
+}
