@@ -22,7 +22,7 @@ LevelBase::LevelBase(StageManager &manager, AssetManager &assets,
   messages.setOutlineColor(Color::Black);
   messages.setFillColor(Color::White);
   messages.setOutlineThickness(3);
-  messages.setCharacterSize(16);
+  messages.setCharacterSize(32);
   auto f = assets.getData("NimbusRoman-Regular.otf");
   if (!font.loadFromMemory(f->data, f->size)) {
     throw runtime_error("Font load failed");
@@ -135,18 +135,21 @@ bool LevelBase::onEvent(sf::Event &event) {
     if (clicked) {
       /* Creating plank */
       pos = {(float)event.mouseButton.x, (float)event.mouseButton.y};
-      NodeList::iterator end = findNode(pos, 2);
-      if (end == nodes.end()) {
-        /* The user does not seem to want to connect to a existing node. */
-        nodes.push_front({pos, 0, nullptr});
-        end = nodes.begin();
-      }
-      if (end != startNode) {
-        /* onHover adjusts the sprite accordingly */
-        onHover(end->p);
-        sprites.push_back({sprite, startNode, end});
-        startNode->count++;
-        end->count++;
+      if ((start - pos).lengthSq() <=
+          def.plankMaxLength * def.plankMaxLength * scale * scale) {
+        NodeList::iterator end = findNode(pos, 2);
+        if (end == nodes.end()) {
+          /* The user does not seem to want to connect to a existing node. */
+          nodes.push_front({pos, 0, nullptr});
+          end = nodes.begin();
+        }
+        if (end != startNode) {
+          /* onHover adjusts the sprite accordingly */
+          onHover(end->p);
+          sprites.push_back({sprite, startNode, end});
+          startNode->count++;
+          end->count++;
+        }
       }
       clicked = false;
       return true;
@@ -218,7 +221,7 @@ pair<b2Body *, float> LevelBase::addBody(Plank &p) {
   b2PolygonShape shape;
   float hw = (p.start->p - p.end->p).length() * 0.5 * scale;
   shape.SetAsBox(hw, def.plankWidth * 0.5 / level->getRenDef().texturePPM);
-  body->CreateFixture(&shape, 20);
+  body->CreateFixture(&shape, def.plankDensity);
   auto sprite = level->bindSprite(body);
   B2WorldInfo::TextureInfo info{
       {}, {}, hw * 2 * level->getRenDef().texturePPM, def.plankWidth, true};
@@ -234,7 +237,7 @@ void LevelBase::bindJoint(Plank &p, b2Body *body, float hw) {
   djf.bodyA = p.start->body;
   djf.bodyB = body;
   djf.length = 1 / level->getRenDef().drawPPM;
-  djf.dampingRatio = 1;
+  djf.dampingRatio = 0.5;
   djf.localAnchorA.Set(p.start->hw, 0);
   djf.localAnchorB.Set(hw, 0);
   if (djf.bodyA != djf.bodyB) {
@@ -287,17 +290,22 @@ void LevelBase::restart() {
 
 bool LevelBase::onHover(Vector2f position) {
   if (clicked) {
-    auto mid = (start + position) * 0.5f;
-    sprite.setPosition(mid);
     float scale = level->getRenDef().drawPPM / level->getRenDef().texturePPM;
     auto dist = start - position;
     auto distance = dist.length();
+    auto max = def.plankMaxLength * scale;
     if (distance > scale) {
       sprite.setRotation(dist.angle());
     } else {
       sprite.setRotation(radians(0));
       distance = scale * 4;
     }
+    if (distance > max) {
+      position = start - dist * max / distance;
+      distance = max + 0.1;
+    }
+    auto mid = (start + position) * 0.5f;
+    sprite.setPosition(mid);
     Vector2f size{distance / scale, def.plankWidth};
     sprite.setSize(size);
     sprite.setOrigin(size * 0.5f);
@@ -318,6 +326,7 @@ LevelBase::LevelBaseDef LevelBase::loadConfig() {
   def.plankDensity = plank.attribute("density").as_float(1);
   def.plankWidth = plank.attribute("width").as_float(4);
   def.plankTexture = plank.attribute("texture").value();
+  def.plankMaxLength = plank.attribute("max-length").as_float(32);
   auto node = config.child("node");
   def.nodeTexture = node.attribute("texture").value();
   def.jointBreakageForceSq = config.attribute("joint-breakage").as_float(1);

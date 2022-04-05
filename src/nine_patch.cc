@@ -83,6 +83,10 @@ void NinePatchSprite::setSize(const sf::Vector2f &size) {
   updateVertices();
 }
 
+sf::Vector2f NinePatchSprite::getSize() {
+  return size;
+}
+
 sf::FloatRect NinePatchSprite::getLocalBounds() const {
   FloatRect rect{Vector2f(), Vector2f(size)};
   return rect;

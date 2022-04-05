@@ -18,6 +18,7 @@ public:
   NinePatchSprite(const sf::Texture &texture, const sf::IntRect &clip,
                   const sf::IntRect &patchCenter);
   void setSize(const sf::Vector2f &size);
+  sf::Vector2f getSize();
   sf::FloatRect getLocalBounds() const;
 };
 

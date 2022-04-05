@@ -16,6 +16,7 @@ public:
     std::string textureBundle;
     float plankDensity;
     float plankWidth;
+    float plankMaxLength;
     std::string plankTexture;
     std::string nodeTexture;
     float jointBreakageForceSq;
