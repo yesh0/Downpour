@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="left-down" width="8" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="2">
+ <layer id="1" name="Tile Layer 1" width="8" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0
+</data>
+ </layer>
+ <objectgroup id="2" name="B2Static">
+  <object id="1" name="Start" x="0" y="176" width="32" height="16">
+   <properties>
+    <property name="TextureCount" type="int" value="2"/>
+    <property name="Textures">start
+start2
+end=plank</property>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

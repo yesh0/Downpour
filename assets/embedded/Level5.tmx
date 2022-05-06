@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="left-down" width="8" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="75">
+ <tileset firstgid="1" source="Tiled.tsx"/>
+ <layer id="1" name="Background" width="8" height="12">
+  <data encoding="csv">
+14,6,13,13,13,13,13,13,
+13,13,13,14,5,15,13,13,
+13,13,13,13,13,13,13,13,
+13,1,2,3,13,13,13,13,
+13,10,11,12,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,4,5,5,6,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13
+</data>
+ </layer>
+ <layer id="2" name="Ground" width="8" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+13,1,2,0,0,13,13,13,
+13,10,11,0,0,13,13,13,
+13,13,13,0,0,13,13,13,
+13,13,13,0,0,0,6,13,
+13,13,13,13,0,0,13,13,
+21,22,13,13,13,13,13,13,
+8,8,8,8,8,8,8,8,
+17,17,17,17,17,17,17,17,
+17,17,17,17,17,17,17,17
+</data>
+ </layer>
+ <objectgroup id="3" name="Player">
+  <object id="6" name="Player" x="57.365" y="91.63" width="8" height="8">
+   <properties>
+    <property name="Density" type="float" value="0.6"/>
+    <property name="TextureCount" type="int" value="5"/>
+    <property name="Textures">bunsleep1
+bunsleep2
+awake=bunawake
+sad=buncry
+happy=bunheart</property>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="8" name="B2Joints"/>
+ <objectgroup id="6" name="B2Dynamic">
+  <object id="71" name="DD" x="45.6645" y="112.888" width="31.5" height="3.25">
+   <properties>
+    <property name="Density" value="1.4"/>
+    <property name="NinePatched" type="bool" value="true"/>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="Textures" value="steel"/>
+   </properties>
+  </object>
+  <object id="72" name="DD" x="49.2705" y="114.519" width="2.66921" height="33.4447" rotation="146.964">
+   <properties>
+    <property name="Density" value="0.6"/>
+    <property name="NinePatched" type="bool" value="true"/>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="Textures" value="steel"/>
+   </properties>
+  </object>
+  <object id="73" name="DD" x="74.8726" y="116.755" width="2.66921" height="46.536" rotation="232.046">
+   <properties>
+    <property name="Density" value="0.6"/>
+    <property name="NinePatched" type="bool" value="true"/>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="Textures" value="steel"/>
+   </properties>
+  </object>
+  <object id="74" name="DD" x="28.6335" y="88.491" width="2.66921" height="83.2682" rotation="269.399">
+   <properties>
+    <property name="Density" value="0.6"/>
+    <property name="NinePatched" type="bool" value="true"/>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="Textures" value="steel"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="5" name="B2Static">
+  <object id="29" x="-32" y="144" width="192" height="48"/>
+  <object id="50" x="-48" y="0" width="16" height="192"/>
+  <object id="53" x="160" y="0" width="16" height="192"/>
+  <object id="67" x="11" y="137.667" width="10" height="8.66667"/>
+ </objectgroup>
+</map>

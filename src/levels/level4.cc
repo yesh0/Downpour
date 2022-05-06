@@ -1,5 +1,5 @@
-#ifndef LEVEL_TITLE_H
-#define LEVEL_TITLE_H
+#ifndef LEVEL4_TITLE_H
+#define LEVEL4_TITLE_H
 
 #include "level.h"
 #include "level_base.h"
@@ -7,20 +7,18 @@
 using namespace std;
 using namespace sf;
 
-class Level1 : public LevelBase {
-private:
-  int happyDelay;
+class Level4 : public LevelBase {
 protected:
-  Level1(StageManager &manager, AssetManager &assets,
+  Level4(StageManager &manager, AssetManager &assets,
          const TiledWorldDef::RenDef &rendering)
-      : LevelBase(manager, assets, "Level1.xml", rendering), happyDelay(0) {
-    messages.setString("Tutorial");
+      : LevelBase(manager, assets, "Level4.xml", rendering) {
+    messages.setString("The Pit (Night)");
   }
 
 public:
   static LevelStage *create(StageManager &manager, AssetManager &assets,
                             const TiledWorldDef::RenDef &rendering) {
-    return new Level1{manager, assets, rendering};
+    return new Level4{manager, assets, rendering};
   }
 
   void step(float delta) {
@@ -28,22 +26,16 @@ public:
       level->getRainDef().rain = true;
     }
     LevelBase::step(delta);
-    if (happyDelay > 0) {
-      happyDelay--;
-      if (happyDelay == 0) {
-        manager.unshift("Level2");
-        manager.push("Transition");
-        manager.erase(this, 1);
-        state = RESTARTING;
-      }
-    }
   }
 
   void onPlayerMood(PlayerState::Mood mood) {
     if (state == STARTED) {
       switch (mood) {
       case LevelBase::PlayerState::HAPPY:
-        happyDelay = 120;
+        manager.unshift("Level5");
+        manager.push("Transition");
+        manager.erase(this, 1);
+        state = RESTARTING;
         break;
       case LevelBase::PlayerState::SAD:
         messages.setString("Failed :(");
@@ -56,4 +48,4 @@ public:
   }
 };
 
-#endif /* !LEVEL_TITLE_H */
+#endif /* !LEVEL4_TITLE_H */

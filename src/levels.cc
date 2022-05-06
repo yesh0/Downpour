@@ -2,6 +2,10 @@
 
 #include "levels/title.cc"
 #include "levels/level1.cc"
+#include "levels/level2.cc"
+#include "levels/level3.cc"
+#include "levels/level4.cc"
+#include "levels/level5.cc"
 #include "levels/transition.cc"
 
 using namespace std;
@@ -10,6 +14,10 @@ static LevelConstructorInfo levels[] = {
   { "Title", TitleLevel::create },
   { "Transition", TransitionStage::create },
   { "Level1", Level1::create },
+  { "Level2", Level2::create },
+  { "Level3", Level3::create },
+  { "Level4", Level4::create },
+  { "Level5", Level5::create },
   { nullptr, nullptr },
 };
 

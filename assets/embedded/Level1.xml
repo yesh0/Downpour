@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+  <ui tiled="level-ui.tmx" atlas="TextureBundle.atlas"
+      particle-texture="water">
+    <gravity x="0" y="10" />
+    <particles color-mixing="1" damping="1" density="1" destroy-by-age="true"
+               ejection="1" elastic="1" gravity-scale="2"
+               max-count="2048" powder="1" pressure="1"
+               radius="0.3" repulsive="1" spring="1"
+               static-iterations="1" static-relaxation="1"
+               static="1" strict-contact="1"
+               surface-tension="1" surface-normal="1"
+               viscous="1" />
+    <rendering>
+      <shader>rain.glsl</shader>
+      <scale texture="10" rain="2.5" />
+    </rendering>
+    <rain rain="false" lifetime="1" drop-per-second="2000"
+          angular-random="0" velocity-random="0">
+      <velocity x="0" y="500" />
+      <zone x="0" y="-16" w="128" h="16" />
+    </rain>
+  </ui>
+  <level tiled="Level1.tmx" atlas="TextureBundle.atlas"
+      particle-texture="water">
+    <gravity x="0" y="10" />
+    <particles color-mixing="1" damping="1" density="0.01" destroy-by-age="true"
+               ejection="1" elastic="1" gravity-scale="1"
+               max-count="4096" powder="1" pressure="1"
+               radius="0.3" repulsive="1" spring="1"
+               static-iterations="1" static-relaxation="1"
+               static="1" strict-contact="1"
+               surface-tension="1" surface-normal="1"
+               viscous="1" />
+    <rendering>
+      <shader>rain.glsl</shader>
+      <scale texture="10" rain="2.5" />
+    </rendering>
+    <rain rain="false" lifetime="1" drop-per-second="1000"
+          angular-random="0" velocity-random="0">
+      <velocity x="0" y="500" />
+      <zone x="0" y="-16" w="128" h="16" />
+    </rain>
+  </level>
+  <config level="Level1" xml="Level1.xml" bundle="TextureBundle.atlas" joint-breakage="10000">
+    <plank density="20" width="4" texture="plank" max-length="36" />
+    <node texture="marker1" />
+    <player anger="360" awake="800" sad="1200" />
+  </config>
+</stage>

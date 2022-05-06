@@ -22,7 +22,9 @@ void main(void) {
     }
     bg /= 10.0;
     /* Water color */
-    if (bg.a != 0.0) {
+    if (bg.a == 0.0) {
+      color.a = color.a * 0.75;
+    } else {
       color = mix(bg, color, color.a * 0.5);
     }
     gl_FragColor = color;

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+  <ui tiled="level-ui.tmx" atlas="TextureBundle.atlas"
+      particle-texture="water">
+    <gravity x="0" y="10" />
+    <particles color-mixing="1" damping="1" density="1" destroy-by-age="true"
+               ejection="1" elastic="1" gravity-scale="2"
+               max-count="2048" powder="1" pressure="1"
+               radius="0.3" repulsive="1" spring="1"
+               static-iterations="1" static-relaxation="1"
+               static="1" strict-contact="1"
+               surface-tension="1" surface-normal="1"
+               viscous="1" />
+    <rendering>
+      <shader>rain.glsl</shader>
+      <scale texture="10" rain="2.5" />
+    </rendering>
+    <rain rain="false" lifetime="1" drop-per-second="2000"
+          angular-random="0" velocity-random="0">
+      <velocity x="0" y="500" />
+      <zone x="0" y="-16" w="128" h="16" />
+    </rain>
+  </ui>
+  <level tiled="Level5.tmx" atlas="TextureBundle.atlas"
+      particle-texture="water">
+    <gravity x="0" y="10" />
+    <particles color-mixing="0" damping="1" density="1" destroy-by-age="true"
+               ejection="0" elastic="0" gravity-scale="1"
+               max-count="40960" powder="0" pressure="2"
+               radius="0.3" repulsive="0" spring="0"
+               static-iterations="3" static-relaxation="2"
+               static="0.1" strict-contact="0"
+               surface-tension="0" surface-normal="1"
+               viscous="1" />
+    <rendering>
+      <shader>rain.glsl</shader>
+      <scale texture="10" rain="5" />
+    </rendering>
+    <rain rain="false" lifetime="15" drop-per-second="100"
+          angular-random="0" velocity-random="0">
+      <velocity x="0" y="0" />
+      <zone x="-32" y="112" w="16" h="32" />
+      <zone x="128" y="112" w="16" h="32" />
+      <zone x="0" y="-48" w="128" h="1" />
+    </rain>
+  </level>
+  <config level="Level5" xml="Level5.xml" bundle="TextureBundle.atlas" joint-breakage="10000000">
+    <plank density="0.8" width="4" texture="steel" max-length="72" />
+    <node texture="marker2" />
+    <player anger="2000000" awake="1" sad="5000000" />
+  </config>
+</stage>

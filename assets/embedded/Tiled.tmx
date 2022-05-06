@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="left-down" width="8" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="30">
+ <tileset firstgid="1" source="Tiled.tsx"/>
+ <layer id="1" name="Background" width="8" height="12">
+  <data encoding="csv">
+14,6,13,13,13,13,13,13,
+13,13,13,14,5,15,13,13,
+13,13,13,13,13,13,13,13,
+13,1,2,3,13,13,13,13,
+13,10,11,12,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,4,5,5,6,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13
+</data>
+ </layer>
+ <objectgroup id="5" name="B2Dynamic">
+  <object id="15" name="Title" x="8" y="48" width="96" height="32">
+   <properties>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="TextureDelay" type="int" value="3"/>
+    <property name="Textures" value="downpour"/>
+   </properties>
+  </object>
+  <object id="26" name="Circle" x="39.1956" y="31.0523" width="16" height="16">
+   <properties>
+    <property name="Density" type="int" value="5"/>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="Textures" value="steel"/>
+   </properties>
+   <ellipse/>
+  </object>
+  <object id="29" name="Start" x="30.9375" y="143.875" width="64" height="32">
+   <properties>
+    <property name="TextureCount" type="int" value="2"/>
+    <property name="Textures">start
+start2</property>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="B2Static">
+  <object id="24" name="L" x="16" y="32">
+   <point/>
+  </object>
+  <object id="25" name="R" x="112" y="32">
+   <point/>
+  </object>
+  <object id="27" name="LL" x="32" y="128">
+   <point/>
+  </object>
+  <object id="28" name="RR" x="96" y="128">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="9" name="B2Joints">
+  <properties>
+   <property name="Joints">Rope L Title 23.998 -48,-16 125
+Rope R Title 24 48,-16 90
+Rope LL Start 16 -32,-8 30
+Rope RR Start 16 32,-8 35</property>
+  </properties>
+ </objectgroup>
+ <objectgroup id="7" name="B2Kinematic"/>
+</map>

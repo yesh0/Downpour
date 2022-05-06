@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stage>
+  <ui tiled="Transition.tmx" atlas="TextureBundle.atlas"
+      particle-texture="water">
+    <gravity x="0" y="30" />
+    <particles color-mixing="1" damping="1" density="1" destroy-by-age="true"
+               ejection="1" elastic="1" gravity-scale="2"
+               max-count="2048" powder="1" pressure="1"
+               radius="0.3" repulsive="1" spring="1"
+               static-iterations="1" static-relaxation="1"
+               static="1" strict-contact="1"
+               surface-tension="1" surface-normal="1"
+               viscous="1" />
+    <rendering>
+      <shader>rain.glsl</shader>
+      <scale texture="10" rain="2.5" />
+    </rendering>
+    <rain rain="false" lifetime="1" drop-per-second="2000"
+          angular-random="0" velocity-random="0">
+      <velocity x="0" y="500" />
+      <zone x="0" y="-16" w="128" h="16" />
+    </rain>
+  </ui>
+  <level tiled="Transition.tmx" atlas="TextureBundle.atlas"
+      particle-texture="water2">
+    <gravity x="0" y="10" />
+    <particles color-mixing="1" damping="1" density="1" destroy-by-age="true"
+               ejection="1" elastic="1" gravity-scale="4"
+               max-count="4096" powder="1" pressure="1"
+               radius="0.4" repulsive="1" spring="1"
+               static-iterations="1" static-relaxation="1"
+               static="1" strict-contact="1"
+               surface-tension="1" surface-normal="1"
+               viscous="1" />
+    <rendering>
+      <shader>Transition.glsl</shader>
+      <scale texture="10" rain="3.6" />
+    </rendering>
+    <rain rain="true" lifetime="0.5" drop-per-second="2000"
+          angular-random="0" velocity-random="0">
+      <velocity x="0" y="500" />
+      <zone x="0" y="-16" w="128" h="16" />
+    </rain>
+  </level>
+</stage>
