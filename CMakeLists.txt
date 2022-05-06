@@ -13,6 +13,12 @@ if(${CMAKE_VERSION} VERSION_LESS 3.14)
   include(cmake/add_FetchContent_MakeAvailable.cmake)
 endif()
 
+option(
+  BUNDLE_DOWNPOUR
+  "Whether downpour should build media files into the binary"
+  ON
+)
+
 # liquidfun
 FetchContent_Declare(
   liquidfun

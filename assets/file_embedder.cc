@@ -12,7 +12,7 @@ using namespace std;
 string toVariableName(string path) {
   string filename = filesystem::path(path).filename().string();
   for (auto &c : filename) {
-    c = isalpha(c) ? toupper(c) : '_';
+    c = (isalpha(c) || isdigit(c) || c == '_') ? toupper(c) : '_';
   }
   return filename;
 }

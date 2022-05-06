@@ -9,6 +9,7 @@
 #include "b2_tiled.h"
 #include "level.h"
 #include "particle_batch.h"
+#include "rate_limiter.h"
 #include "stage.h"
 #include "tiled.h"
 #include "tiled_world.h"
@@ -16,9 +17,10 @@
 using namespace std;
 using namespace sf;
 
-int main() {
+int main(int argc, char** argv) {
   RenderWindow window(VideoMode(640, 960),
                       "SFML Works!", Style::Titlebar | Style::Close);
+  window.setPosition({0, 0});
   View view(FloatRect(Vector2f(0, 0), Vector2f(640, 960)));
   window.setView(view);
 
@@ -29,16 +31,22 @@ int main() {
   rendering.screenW = 640;
   rendering.screenH = 960;
 
-#if 0
+#ifdef BUNDLE_DOWNPOUR
   BuiltInAssetManager manager;
 #else
   FilesystemAssetManager manager("../assets/embedded");
 #endif
 
   StageManager stageManager(manager, rendering);
-  stageManager.push("Title");
+  if (argc == 1) {
+    stageManager.push("Title");
+  } else {
+    stageManager.push(argv[1]);
+  }
 
   size_t frames = 0;
+  RateLimiter limiter{60};
+  float delta = 1. / 60;
   while (window.isOpen()) {
     ++frames;
     Event event;
@@ -49,12 +57,12 @@ int main() {
         stageManager.onEvent(event);
       }
     }
-    sf::sleep(sf::milliseconds(12));
     window.clear();
-    stageManager.step(0.016);
+    stageManager.step(delta);
     stageManager.prepare(false);
     window.draw(stageManager);
     window.display();
+    delta = limiter();
   }
   return 0;
 }

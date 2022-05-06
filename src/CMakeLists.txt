@@ -13,7 +13,10 @@ add_executable(downpour
   tiled_world.cc
 )
 
-add_dependencies(downpour embed_files)
+if(BUNDLE_DOWNPOUR)
+  add_dependencies(downpour embed_files)
+  add_compile_definitions(BUNDLE_DOWNPOUR)
+endif()
 
 set_target_properties(downpour PROPERTIES
   CXX_STANDARD 17
