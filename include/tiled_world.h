@@ -3,6 +3,7 @@
 
 #include <random>
 #include <string>
+#include <vector>
 
 #include "Box2D/Box2D.h"
 #include "SFML/Graphics.hpp"
@@ -35,7 +36,8 @@ struct TiledWorldDef {
   struct RainDef {
     /* Particles */
     /* Zone to spawn particles, (x, y, w, h) */
-    b2Vec4 rainZone;
+    std::vector<b2Vec4> rainZones;
+    float totalZoneArea;
     b2Vec2 rainVelocity;
     /* Angular randomization */
     float rainAngularRandom;

@@ -1,6 +1,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <cmath>
 
 #include "Box2D/Box2D.h"
 
@@ -8,6 +9,11 @@
 #include "util.h"
 
 using namespace std;
+
+b2Vec2 rotateBy(b2Vec2 vec, float radians) {
+  auto rotated = sf::Vector2f(vec.x, vec.y).rotatedBy(sf::radians(radians));
+  return {rotated.x, rotated.y};
+}
 
 b2Vec2 b2Vec2FromString(const string_view &point) {
   auto i = point.find(',');
@@ -72,11 +78,14 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
         int width = object.attribute("width").as_int(0),
             height = object.attribute("height").as_int(0);
         float hWidth = width * 0.5, hHeight = height * 0.5;
+        float rotation = sf::degrees(object.attribute("rotation").as_float(0)).asRadians();
+        b2Vec2 rotatedLocalOffset =
+          (b2Vec2(x, y) + rotateBy({hWidth, hHeight}, rotation)) * ratio;
         if (body == nullptr) {
-          bd.position.Set((x + hWidth) * ratio, (y + hHeight) * ratio);
+          bd.position = rotatedLocalOffset;
           body = world.CreateBody(&bd);
         } else {
-          offset += {(x + hWidth) * ratio, (y + hHeight) * ratio};
+          offset += rotatedLocalOffset;
         }
         float density =
             object.select_node(".//properties/property[@name='Density']")
@@ -101,10 +110,10 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
           b2PolygonShape shape;
           float hwr = hWidth * ratio, hhr = hHeight * ratio;
           b2Vec2 vertices[4] = {
-            b2Vec2{-hwr, -hhr} + offset,
-            b2Vec2{hwr, -hhr} + offset,
-            b2Vec2{hwr, hhr} + offset,
-            b2Vec2{-hwr, hhr} + offset,
+            rotateBy(b2Vec2{-hwr, -hhr}, rotation) + offset,
+            rotateBy(b2Vec2{hwr, -hhr}, rotation) + offset,
+            rotateBy(b2Vec2{hwr, hhr}, rotation) + offset,
+            rotateBy(b2Vec2{-hwr, hhr}, rotation) + offset,
           };
           shape.Set(vertices, 4);
           body->CreateFixture(&shape, density);
@@ -147,7 +156,8 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
               B2WorldInfo::TextureInfo{names, conditionals, (float)width,
                                        (float)height, !ninePatched.empty(),
                                        delay.attribute("value").as_float(1),
-                                       {offset.x / ratio, offset.y / ratio}}));
+                                       {offset.x / ratio, offset.y / ratio},
+                                       type == B2ObjectInfo::BOX ? rotation : 0}));
         }
       } else {
         bd.position.Set(x * ratio, y * ratio);

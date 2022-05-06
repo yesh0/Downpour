@@ -45,6 +45,7 @@ sf::Sprite *TiledWorld::insertByName(const B2WorldInfo::TextureInfo &info,
     auto i = b2Sprites.insert_after(b2Sprites.before_begin(), sprite);
     sp = &*i;
   }
+  sp->rotate(sf::radians(info.rotation));
   return sp;
 }
 
@@ -108,8 +109,17 @@ void TiledWorld::step(float time) {
     float angle = rainDef.rainAngularRandom * (2 * uniform(rng) - 1);
     pd.velocity = b2Mul(b2Rot(angle), pd.velocity);
     for (int i = 0; i < dropCount; ++i) {
-      pd.position.Set(rainDef.rainZone.x + uniform(rng) * rainDef.rainZone.z,
-                      rainDef.rainZone.y + uniform(rng) * rainDef.rainZone.w);
+      float selectedArea = uniform(rng) * rainDef.totalZoneArea;
+      b2Vec4 zone;
+      for (auto &z : rainDef.rainZones) {
+        selectedArea -= z.z * z.w;
+        if (selectedArea < 0) {
+          zone = z;
+          break;
+        }
+      }
+      pd.position.Set(zone.x + uniform(rng) * zone.z,
+                      zone.y + uniform(rng) * zone.w);
       pd.position = pd.position / renDef.texturePPM;
       particleSystem->CreateParticle(pd);
     }

@@ -51,10 +51,16 @@ static void loadRainDef(TiledWorldDef::RainDef &def, xml_node node) {
                         v.attribute("y").as_float()};
   }
   {
-    auto zone = node.child("zone");
-    def.rainZone = {
-        zone.attribute("x").as_float(), zone.attribute("y").as_float(),
-        zone.attribute("w").as_float(), zone.attribute("h").as_float()};
+    def.totalZoneArea = 0;
+    for (auto zone : node.children("zone")) {
+      float w = zone.attribute("w").as_float(),
+            h = zone.attribute("h").as_float();
+      def.rainZones.push_back({
+          zone.attribute("x").as_float(), zone.attribute("y").as_float(),
+          w, h}
+      );
+      def.totalZoneArea += w * h;
+    }
   }
 }
 

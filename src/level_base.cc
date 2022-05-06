@@ -22,14 +22,14 @@ LevelBase::LevelBase(StageManager &manager, AssetManager &assets,
   messages.setOutlineColor(Color::Black);
   messages.setFillColor(Color::White);
   messages.setOutlineThickness(3);
-  messages.setCharacterSize(32);
+  messages.setCharacterSize(48);
   auto f = assets.getData("NimbusRoman-Regular.otf");
   if (!font.loadFromMemory(f->data, f->size)) {
     throw runtime_error("Font load failed");
   }
   messages.setFont(font);
-  messages.setPosition({(float)level->getRenDef().screenW,
-                        (float)level->getRenDef().screenH - 5});
+  messages.setPosition({(float)level->getRenDef().screenW - 20,
+                        (float)level->getRenDef().screenH - 20});
   node.setScale({scale, scale});
   node.setOrigin(Vector2f(node.getTextureRect().getSize()) * 0.5f);
   for (auto i : level->getNodes()) {
