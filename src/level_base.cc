@@ -161,17 +161,21 @@ bool LevelBase::onEvent(sf::Event &event) {
   }
 }
 
-void LevelBase::step(float delta) {
-  if (state == STARTED) {
-    for (auto &joint : joints) {
-      if (joint != nullptr) {
-        if (joint->GetReactionForce(1).LengthSquared() >
-            def.jointBreakageForceSq) {
-          level->getWorld().DestroyJoint(joint);
-          joint = nullptr;
-        }
+void LevelBase::breakJoints() {
+  for (auto &joint : joints) {
+    if (joint != nullptr) {
+      if (joint->GetReactionForce(1).LengthSquared() >
+          def.jointBreakageForceSq) {
+        level->getWorld().DestroyJoint(joint);
+        joint = nullptr;
       }
     }
+  }
+}
+
+void LevelBase::step(float delta) {
+  if (state == STARTED) {
+    breakJoints();
     const int count = level->getParticleSystem().GetBodyContactCount();
     auto contact = level->getParticleSystem().GetBodyContacts();
     for (int i = 0; i != count; ++i, ++contact) {

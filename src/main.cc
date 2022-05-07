@@ -64,5 +64,6 @@ int main(int argc, char** argv) {
     window.display();
     delta = limiter();
   }
+  window.close();
   return 0;
 }

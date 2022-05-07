@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <fstream>
 #include <sstream>
@@ -28,21 +29,21 @@ const AssetInfo *BuiltInAssetManager::getData(const std::string &name) {
 }
 
 void FilesystemAssetManager::deleteInfo(AssetInfo *info) {
-  delete info->data;
-  delete info->name;
+  delete[] info->data;
+  delete[] info->name;
   delete info;
 }
 
 FilesystemAssetManager::FilesystemAssetManager(const std::string &assetDir)
     : dir(assetDir) {}
+
 const AssetInfo *FilesystemAssetManager::getData(const std::string &name) {
   auto i = assetMap.find(name);
   if (i == assetMap.end()) {
     auto file{dir};
     file.append(name);
     auto nameAlloc = new char[name.size() + 1];
-    memcpy(nameAlloc, name.data(), name.size());
-    nameAlloc[name.size()] = '\0';
+    nameAlloc[name.copy(nameAlloc, name.size())] = 0;
     auto size = filesystem::file_size(file);
     auto data = new unsigned char[size];
     ifstream f(file);
@@ -77,7 +78,8 @@ bool parseArray(const string_view &text, int *array, size_t count) {
 BundledTexture::BundledTexture(const std::string &filename,
                                AssetManager &manager)
     : filename(filename), manager(manager) {
-  string atlas((const char *)manager.getData(filename)->data);
+  auto data = manager.getData(filename);
+  string atlas((const char *)data->data, data->size);
   stringstream ss(atlas);
   string line;
   string textureFilename("");

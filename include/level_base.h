@@ -77,6 +77,8 @@ protected:
   NodeList::iterator findNode(sf::Vector2f pos, float scale);
   std::list<b2Joint *> joints;
 
+  void breakJoints();
+
 public:
   LevelBase(StageManager &manager, AssetManager &assets,
             const std::string &config, const TiledWorldDef::RenDef &rendering);

@@ -1,0 +1,44 @@
+{
+  Liquidfun-Cond-1
+  Memcheck:Cond
+  ...
+  fun:_ZN16b2ParticleSystem14SolveLifetimesERK10b2TimeStep
+  fun:_ZN16b2ParticleSystem5SolveERK10b2TimeStep
+  ...
+}
+{
+  Liquidfun-Cond-2
+  Memcheck:Cond
+  fun:_ZN16b2ParticleSystem19SetParticleLifetimeEif
+  fun:_ZN16b2ParticleSystem14CreateParticleERK13b2ParticleDef
+  ...
+}
+{
+  Liquidfun-Uninit-3
+  Memcheck:Cond
+  fun:_ZN9LevelBase11breakJointsEv
+  ...
+}
+{
+  Liquidfun-Cond-4-Stackframe-Too-Long
+  Memcheck:Cond
+  fun:_ZNK12_GLOBAL__N_124ExpirationTimeComparatorclEii
+  ...
+}
+{
+  Liquidfun-Cond-5-Stackframe-Too-Long
+  Memcheck:Cond
+  ...
+  fun:_ZSt4sortIPiN12_GLOBAL__N_124ExpirationTimeComparatorEEvT_S3_T0_
+  ...
+}
+{
+  X11-Whatever-1
+  Memcheck:Leak
+  obj:/usr/lib/libX11.so.6.4.0
+}
+{
+  Valgrind-WhyCountYourself-1
+  Memcheck:Leak
+  obj:/usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so
+}
