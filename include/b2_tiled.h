@@ -47,16 +47,18 @@ class B2Loader {
 private:
   B2WorldInfo info;
   b2World &world;
+  b2ParticleSystem &particleSystem;
   std::unordered_map<std::string, b2Body *> namedObjects;
   std::forward_list<std::pair<b2Joint *, float>> joints;
   std::forward_list<B2ObjectInfo> objectInfo;
   const float ratio;
   void loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd, std::list<b2Body*> *log);
+  void loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd, std::list<b2Body*> *log, bool names);
   std::pair<b2Joint *, float>
   parseJointIntoWorld(const std::string_view &jointDef);
 
 public:
-  B2Loader(b2World &world, float ratio);
+  B2Loader(b2World &world, float ratio, b2ParticleSystem &particleSystem);
   void load(const pugi::xml_node &node);
   B2WorldInfo &getInfo();
   std::forward_list<std::pair<b2Joint *, float>> &getJoints();

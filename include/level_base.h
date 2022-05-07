@@ -8,6 +8,10 @@
 #include "level.h"
 #include "nine_patch.h"
 
+/**
+ * @brief A base class that handles most draw-&-build logic, joint-breakage and rendering
+ * 
+ */
 class LevelBase : public LevelStage {
 public:
   struct LevelBaseDef {

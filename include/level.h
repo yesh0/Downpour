@@ -9,6 +9,11 @@
 #include "asset_manager.h"
 #include "tiled_world.h"
 
+/**
+ * @brief Loads level config, handles basic mouse events
+ * 
+ * The barebone level consists of two parts: `ui` and `level`.
+ */
 class LevelStage : public Stage {
 protected:
   std::unique_ptr<TiledWorld> ui, level;

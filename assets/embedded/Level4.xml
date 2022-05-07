@@ -22,7 +22,7 @@
     </rain>
   </ui>
   <level tiled="Level4.tmx" atlas="TextureBundle.atlas"
-      particle-texture="water">
+      particle-texture="water" elastic-texture="water2">
     <gravity x="0" y="10" />
     <particles color-mixing="1" damping="1" density="0.01" destroy-by-age="true"
                ejection="1" elastic="1" gravity-scale="1"

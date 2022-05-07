@@ -55,14 +55,15 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
     : rng(randomDevice()), world(def.gravity),
       textureBundle(textureBundleFilename, manager), manager(manager),
       rainDef(def.rainDef), renDef(def.rendering),
-      b2Loader(world, 1 / def.rendering.texturePPM), tiledLoader(manager),
+      b2Loader(world, 1 / def.rendering.texturePPM, *particleSystem), tiledLoader(manager),
       map(tiledLoader.load(tiledFile, b2Loader)),
       particleSystem(world.CreateParticleSystem(&def.particleSystemDef)),
-      particleBatch(
+      particleBatches(
           particleSystem,
           centeredSprite(textureBundle.getSprite((def.particleTexture))),
+          centeredSprite(textureBundle.getSprite((def.elasticParticleTexture))),
           def.rendering.drawPPM) {
-  particleBatch.setOverlap(renDef.rainScale);
+  particleBatches.setOverlap(renDef.rainScale);
   float scale = renDef.drawPPM / renDef.texturePPM;
   map.setScale(Vector2f(scale, scale));
   auto shaderFile = manager.getData(renDef.shader);
@@ -141,7 +142,7 @@ void TiledWorld::step(float time) {
 }
 
 void TiledWorld::prepare() {
-  particleBatch.update();
+  particleBatches.update();
   auto &textured = b2Loader.getInfo().texturedObjects;
   for (int i = 0; i != textured.size(); ++i) {
     auto body = textured[i].first;
@@ -152,7 +153,7 @@ void TiledWorld::prepare() {
   RenderStates mine;
   mine.transform = getTransform();
   shaderPass.clear(Color::Transparent);
-  shaderPass.draw(particleBatch, mine);
+  shaderPass.draw(particleBatches, mine);
   shaderPass.display();
   backgroundPass.clear(Color::Transparent);
   backgroundPass.draw(map, mine);

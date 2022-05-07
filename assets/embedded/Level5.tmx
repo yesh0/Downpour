@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="left-down" width="8" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="75">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="left-down" width="8" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="86">
  <tileset firstgid="1" source="Tiled.tsx"/>
  <layer id="1" name="Background" width="8" height="12">
   <data encoding="csv">
@@ -34,7 +34,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="Player">
-  <object id="6" name="Player" x="57.365" y="91.63" width="8" height="8">
+  <object id="6" name="Player" x="49.6983" y="107.63" width="8" height="8">
    <properties>
     <property name="Density" type="float" value="0.6"/>
     <property name="TextureCount" type="int" value="5"/>
@@ -48,7 +48,7 @@ happy=bunheart</property>
  </objectgroup>
  <objectgroup id="8" name="B2Joints"/>
  <objectgroup id="6" name="B2Dynamic">
-  <object id="71" name="DD" x="45.6645" y="112.888" width="31.5" height="3.25">
+  <object id="71" name="DD" x="37.3312" y="124.221" width="31.5" height="3.25">
    <properties>
     <property name="Density" value="1.4"/>
     <property name="NinePatched" type="bool" value="true"/>
@@ -56,7 +56,7 @@ happy=bunheart</property>
     <property name="Textures" value="steel"/>
    </properties>
   </object>
-  <object id="72" name="DD" x="49.2705" y="114.519" width="2.66921" height="33.4447" rotation="146.964">
+  <object id="72" name="DD" x="40.9372" y="125.852" width="2.66921" height="33.4447" rotation="146.964">
    <properties>
     <property name="Density" value="0.6"/>
     <property name="NinePatched" type="bool" value="true"/>
@@ -64,7 +64,7 @@ happy=bunheart</property>
     <property name="Textures" value="steel"/>
    </properties>
   </object>
-  <object id="73" name="DD" x="74.8726" y="116.755" width="2.66921" height="46.536" rotation="232.046">
+  <object id="73" name="DD" x="66.5393" y="128.088" width="2.66921" height="46.536" rotation="232.046">
    <properties>
     <property name="Density" value="0.6"/>
     <property name="NinePatched" type="bool" value="true"/>
@@ -72,7 +72,7 @@ happy=bunheart</property>
     <property name="Textures" value="steel"/>
    </properties>
   </object>
-  <object id="74" name="DD" x="28.6335" y="88.491" width="2.66921" height="83.2682" rotation="269.399">
+  <object id="74" name="DD" x="20.3002" y="99.8243" width="2.66921" height="83.2682" rotation="269.399">
    <properties>
     <property name="Density" value="0.6"/>
     <property name="NinePatched" type="bool" value="true"/>
@@ -81,6 +81,7 @@ happy=bunheart</property>
    </properties>
   </object>
  </objectgroup>
+ <objectgroup id="9" name="B2Particles"/>
  <objectgroup id="5" name="B2Static">
   <object id="29" x="-32" y="144" width="192" height="48"/>
   <object id="50" x="-48" y="0" width="16" height="192"/>

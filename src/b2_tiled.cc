@@ -26,14 +26,23 @@ b2Vec2 b2Vec2FromString(const string_view &point) {
 
 void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
                              std::list<b2Body *> *log) {
+  loadIntoWorld(group, bd, log, true);
+}
+
+void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
+                             std::list<b2Body *> *log, bool names) {
+  unordered_map<string, b2Body*> localNames{};
+  unordered_map<string, b2Body*> &localNamedObjects =
+    names ? namedObjects : localNames;
+
   for (auto object : group.children("object")) {
     b2Body *body = nullptr;
     auto name = object.attribute("name");
     b2Vec2 offset{0, 0};
     bool objectExists = false;
     if (name) {
-      auto bodyI = namedObjects.find(name.value());
-      if (bodyI != namedObjects.end()) {
+      auto bodyI = localNamedObjects.find(name.value());
+      if (bodyI != localNamedObjects.end()) {
         body = bodyI->second;
         offset = -body->GetPosition();
         objectExists = true;
@@ -67,9 +76,6 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
       b2PolygonShape shape;
       shape.Set(vertices.data(), vertices.size());
       body->CreateFixture(&shape, 1);
-      if (log != nullptr) {
-        log->push_back(body);
-      }
     } else if (object.attribute("width") || object.child("point")) {
       auto textures =
           object.select_node(".//properties/property[@name='Textures']").node();
@@ -166,19 +172,25 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
       }
     }
     if (!object.attribute("name").empty()) {
-      auto i = namedObjects.insert(
+      auto i = localNamedObjects.insert(
           make_pair(string(object.attribute("name").value()), body));
-      auto info = objectInfo.insert_after(
-          objectInfo.before_begin(), B2ObjectInfo{i.first->first, body, type});
-      body->SetUserData((void *)&(*info));
-    }
-    if (body != nullptr && log != nullptr) {
+      if (names) {
+        auto info = objectInfo.insert_after(
+            objectInfo.before_begin(), B2ObjectInfo{i.first->first, body, type});
+        body->SetUserData((void *)&(*info));
+      }
+      if (i.second && body != nullptr && log != nullptr) {
+        log->push_back(body);
+      }
+    } else if (body != nullptr && log != nullptr) {
       log->push_back(body);
     }
   }
 }
 
-B2Loader::B2Loader(b2World &world, float ratio) : world(world), ratio(ratio) {}
+B2Loader::B2Loader(b2World &world, float ratio, b2ParticleSystem &particleSystem)
+  : world(world), ratio(ratio), particleSystem(particleSystem) {}
+
 void B2Loader::load(const pugi::xml_node &node) {
   b2BodyDef bd;
   info.player = nullptr;
@@ -199,6 +211,28 @@ void B2Loader::load(const pugi::xml_node &node) {
       loadIntoWorld(group, bd, &players);
       if (players.size() >= 1) {
         info.player = players.front();
+      }
+    } else if (type == "B2Particles") {
+      list<b2Body *> particleBodies;
+      bd.type = b2_staticBody;
+      loadIntoWorld(group, bd, &particleBodies, false);
+      b2ParticleGroupDef gd;
+      gd.flags = b2_elasticParticle;
+      gd.groupFlags = b2_solidParticleGroup;
+      gd.shape = nullptr;
+      gd.strength = 1;
+      vector<b2Shape*> shapes{};
+      for (auto body : particleBodies) {
+        shapes.clear();
+        for (auto fixture = body->GetFixtureList();
+             fixture != nullptr; fixture = fixture->GetNext()) {
+          shapes.push_back(fixture->GetShape());
+        }
+        gd.shapes = shapes.data();
+        gd.shapeCount = shapes.size();
+        gd.position = body->GetPosition();
+        particleSystem.CreateParticleGroup(gd);
+        world.DestroyBody(body);
       }
     }
   }

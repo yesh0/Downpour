@@ -67,6 +67,10 @@ static void loadRainDef(TiledWorldDef::RainDef &def, xml_node node) {
 static void loadWorldDef(TiledWorldDef &def, xml_node node,
                          const TiledWorldDef::RenDef &rendering) {
   def.particleTexture = node.attribute("particle-texture").value();
+  def.elasticParticleTexture = node.attribute("elastic-texture").value();
+  if (def.elasticParticleTexture.empty()) {
+    def.elasticParticleTexture = def.particleTexture;
+  }
   {
     auto gravity = node.child("gravity");
     def.gravity = {gravity.attribute("x").as_float(),

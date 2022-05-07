@@ -17,6 +17,7 @@
 
 struct TiledWorldDef {
   std::string particleTexture;
+  std::string elasticParticleTexture;
   struct RenDef {
     /* Pixel per meter */
     /* Positinos:
@@ -84,11 +85,11 @@ private:
   BundledTexture textureBundle;
   TiledContactFilter filter;
   b2World world;
+  b2ParticleSystem *particleSystem;
   B2Loader b2Loader;
   TiledLoader tiledLoader;
   TiledMap map;
-  b2ParticleSystem *particleSystem;
-  ParticleBatch particleBatch;
+  ParticleBatches particleBatches;
   std::forward_list<sf::Sprite> b2Sprites;
   std::forward_list<NinePatchSprite> b2NinePatches;
   std::vector<AnimatedSprite> b2AnimatedSprites;
@@ -103,7 +104,8 @@ public:
              AssetManager &manager);
   /* Steps the b2World */
   void step(float time);
-  /* Populates vertices
+  /**
+   * @brief Populates vertices
    * Workaround since sf::Drawable::draw is const.
    * To be called before rendering
    */
