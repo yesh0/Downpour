@@ -21,6 +21,7 @@ public:
     float plankDensity;
     float plankWidth;
     float plankMaxLength;
+    float plankDamping;
     std::string plankTexture;
     std::string nodeTexture;
     float jointBreakageForceSq;

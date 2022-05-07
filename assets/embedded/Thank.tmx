@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="left-down" width="8" height="12" tilewidth="16" tileheight="16" infinite="0" nextlayerid="8" nextobjectid="32">
+ <tileset firstgid="1" source="Tiled.tsx"/>
+ <layer id="1" name="Background" width="8" height="12">
+  <data encoding="csv">
+14,6,13,13,13,13,13,13,
+13,13,13,14,5,15,13,13,
+13,13,13,13,13,13,13,13,
+13,1,2,3,13,13,13,13,
+13,10,11,12,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,4,5,5,6,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13,
+13,13,13,13,13,13,13,13
+</data>
+ </layer>
+ <layer id="2" name="Ground" width="8" height="12">
+  <data encoding="csv">
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,
+9,0,0,0,0,0,0,0,
+18,0,0,0,0,0,0,0,
+18,0,0,0,0,0,0,0,
+32,8,8,9,0,0,0,0,
+17,17,17,32,8,8,8,9
+</data>
+ </layer>
+ <objectgroup id="3" name="Player">
+  <object id="6" name="Player" x="24" y="152" width="8" height="8">
+   <properties>
+    <property name="TextureCount" type="int" value="5"/>
+    <property name="Textures">bunsleep1
+bunsleep2
+awake=bunawake
+sad=buncry
+happy=bunheart</property>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="B2Dynamic">
+  <object id="31" name="Thank" x="16" y="48" width="96" height="48">
+   <properties>
+    <property name="TextureCount" type="int" value="1"/>
+    <property name="Textures" value="thank"/>
+   </properties>
+  </object>
+ </objectgroup>
+ <objectgroup id="7" name="B2Joints">
+  <properties>
+   <property name="Joints">Rope L Thank 17 -64,-24 125
+Rope R Thank 18 64,-24 90</property>
+  </properties>
+ </objectgroup>
+ <objectgroup id="5" name="B2Static">
+  <object id="10" x="0" y="112">
+   <polygon points="0,0 0,80 16,80 16,16"/>
+  </object>
+  <object id="11" x="16" y="160">
+   <polygon points="0,0 0,32 48,32 48,16 32,0"/>
+  </object>
+  <object id="12" x="64" y="176">
+   <polygon points="0,0 0,16 64,16 48,0"/>
+  </object>
+  <object id="28" name="L" x="16" y="32">
+   <point/>
+  </object>
+  <object id="29" name="R" x="112" y="32">
+   <point/>
+  </object>
+ </objectgroup>
+</map>

@@ -1,82 +1,82 @@
 
 TextureBundle.png
-size: 512, 64
+size: 256, 128
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 bunawake
   rotate: false
-  xy: 274, 25
+  xy: 40, 6
   size: 36, 36
   orig: 36, 36
   offset: 0, 0
   index: -1
 buncry
   rotate: false
-  xy: 198, 25
+  xy: 2, 6
   size: 36, 36
   orig: 36, 36
   offset: 0, 0
   index: -1
 bunheart
   rotate: false
-  xy: 350, 25
+  xy: 198, 90
   size: 36, 36
   orig: 36, 36
   offset: 0, 0
   index: -1
 bunsleep1
   rotate: false
-  xy: 312, 25
+  xy: 138, 56
   size: 36, 36
   orig: 36, 36
   offset: 0, 0
   index: -1
 bunsleep2
   rotate: false
-  xy: 236, 25
+  xy: 100, 56
   size: 36, 36
   orig: 36, 36
   offset: 0, 0
   index: -1
 dirt
   rotate: false
-  xy: 388, 29
+  xy: 78, 10
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 downpour
   rotate: false
-  xy: 2, 29
+  xy: 2, 44
   size: 96, 32
   orig: 96, 32
   offset: 0, 0
   index: -1
 downpour2
   rotate: false
-  xy: 100, 29
+  xy: 100, 94
   size: 96, 32
   orig: 96, 32
   offset: 0, 0
   index: -1
 marker1
   rotate: false
-  xy: 36, 21
+  xy: 78, 2
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 marker2
   rotate: false
-  xy: 11, 3
+  xy: 102, 2
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 plank
   rotate: false
-  xy: 44, 22
+  xy: 100, 49
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 2, 2, 2, 2
@@ -85,7 +85,7 @@ plank
   index: -1
 plank2
   rotate: false
-  xy: 2, 2
+  xy: 236, 119
   size: 7, 7
   split: 2, 4, 3, 3
   pad: 2, 4, 3, 3
@@ -94,37 +94,44 @@ plank2
   index: -1
 start
   rotate: false
-  xy: 2, 11
+  xy: 112, 38
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
 start2
   rotate: false
-  xy: 422, 45
+  xy: 112, 20
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
 steel
   rotate: false
-  xy: 36, 14
+  xy: 176, 87
   size: 5, 5
   split: 2, 2, 2, 2
   pad: 2, 2, 2, 2
   orig: 5, 5
   offset: 0, 0
   index: -1
+thank
+  rotate: false
+  xy: 2, 78
+  size: 96, 48
+  orig: 96, 48
+  offset: 0, 0
+  index: -1
 water
   rotate: false
-  xy: 422, 37
+  xy: 86, 2
   size: 6, 6
   orig: 6, 6
   offset: 0, 0
   index: -1
 water2
   rotate: false
-  xy: 456, 55
+  xy: 94, 2
   size: 6, 6
   orig: 6, 6
   offset: 0, 0

@@ -176,12 +176,14 @@ void LevelBase::breakJoints() {
 void LevelBase::step(float delta) {
   if (state == STARTED) {
     breakJoints();
-    const int count = level->getParticleSystem().GetBodyContactCount();
-    auto contact = level->getParticleSystem().GetBodyContacts();
+    auto &particleSystem = level->getParticleSystem();
+    const int count = particleSystem.GetBodyContactCount();
+    auto contact = particleSystem.GetBodyContacts();
     for (int i = 0; i != count; ++i, ++contact) {
       auto info = B2Loader::getInfo(contact->body);
       if (info != nullptr) {
-        if (info->name == "Player") {
+        if (info->name == "Player"
+            && particleSystem.GetGroupBuffer()[contact->index] == nullptr) {
           player.anger++;
           player.lastHit.restart();
         }
@@ -241,7 +243,7 @@ void LevelBase::bindJoint(Plank &p, b2Body *body, float hw) {
   djf.bodyA = p.start->body;
   djf.bodyB = body;
   djf.length = 1 / level->getRenDef().drawPPM;
-  djf.dampingRatio = 0.5;
+  djf.dampingRatio = def.plankDamping;
   djf.localAnchorA.Set(p.start->hw, 0);
   djf.localAnchorB.Set(hw, 0);
   if (djf.bodyA != djf.bodyB) {
@@ -331,6 +333,7 @@ LevelBase::LevelBaseDef LevelBase::loadConfig() {
   def.plankWidth = plank.attribute("width").as_float(4);
   def.plankTexture = plank.attribute("texture").value();
   def.plankMaxLength = plank.attribute("max-length").as_float(32);
+  def.plankDamping = plank.attribute("damping").as_float(0.5);
   auto node = config.child("node");
   def.nodeTexture = node.attribute("texture").value();
   def.jointBreakageForceSq = config.attribute("joint-breakage").as_float(1);
