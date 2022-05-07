@@ -13,21 +13,21 @@ jobs:
     strategy:
       matrix:
         toolchain:
-          - linux-gcc
-          - macos-clang
+          # - linux-gcc
+          # - macos-clang
           - windows-msvc
 
         configuration:
-          - Debug
+          - Release
 
         include:
-          - toolchain: linux-gcc
-            os: ubuntu-latest
-            compiler: gcc
+          # - toolchain: linux-gcc
+          #   os: ubuntu-latest
+          #   compiler: clang
 
-          - toolchain: macos-clang
-            os: macos-latest
-            compiler: clang
+          # - toolchain: macos-clang
+          #   os: macos-latest
+          #   compiler: clang
 
           - toolchain: windows-msvc
             os: windows-latest
@@ -37,11 +37,31 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v2
 
-    - name: Setup OpenGL
-      uses: openrndr/setup-opengl@v1.1
+    # - name: Setup OpenGL, SFML (Linux)
+    #   run: |
+    #     sudo apt install -y xorg-dev freeglut3-dev libfreetype-dev libxrandr-dev 
+    #     sudo apt install -y libudev-dev libflac-dev libflac++-dev libvorbis-dev
+    #     sudo apt install -y libvorbisenc2 libalut-dev
+    #   if: matrix.os == 'ubuntu-latest'
+
+    # - name: Setup OpenGL, SFML (MacOS)
+    #   run: |
+    #     brew install freeglut
+    #     brew install glew
+    #     brew install glfw
+    #     brew install glm
+    #   if: matrix.os == 'macos-latest'
+
+    # - name: Configure (${{ matrix.configuration }})
+    #   run: |
+    #     export CC=/usr/bin/clang
+    #     export CXX=/usr/bin/clang++
+    #     cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+    #   if: matrix.os == 'ubuntu-latest'
 
     - name: Configure (${{ matrix.configuration }})
       run: cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+      if: matrix.os == 'windows-latest'
 
     - name: Build with ${{ matrix.compiler }}
       run: cmake --build build
