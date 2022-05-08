@@ -40,7 +40,7 @@ public:
       case BRIM:
         upTime += up ? delta : -delta;
         if (upTime > 1) {
-          messages.setString("And that's how\na boat was made (?)");
+          messages.setString("Life,\nWhat is it\nbut a ...");
           upped = OVER;
         }
         break;
@@ -51,6 +51,8 @@ public:
           manager.push("Transition");
           manager.erase(this, 1);
           state = RESTARTING;
+        } else if (upTime > 2) {
+          messages.setString("Boat?");
         }
         break;
       }

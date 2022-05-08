@@ -20,7 +20,7 @@ using namespace sf;
 
 int main(int argc, char** argv) {
   RenderWindow window(VideoMode(640, 960),
-                      "SFML Works!", Style::Titlebar | Style::Close);
+                      "Downpour - The Game", Style::Titlebar | Style::Close);
   window.setPosition({0, 0});
   View view(FloatRect(Vector2f(0, 0), Vector2f(640, 960)));
   window.setView(view);

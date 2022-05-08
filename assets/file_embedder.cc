@@ -14,7 +14,7 @@ string toVariableName(string path) {
   for (auto &c : filename) {
     c = (isalpha(c) || isdigit(c) || c == '_') ? toupper(c) : '_';
   }
-  return filename;
+  return isdigit(filename[0]) ? ("_" + filename) : filename;
 }
 
 const char lookupTable[] = {
