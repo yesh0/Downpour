@@ -15,7 +15,7 @@ public:
     return new TransitionStage{manager, assets, rendering};
   }
 
-  virtual void step(float delta) {
+  void step(float delta) override {
     time += delta;
     if (time > 1) {
       level->getRainDef().rain = false;
@@ -26,7 +26,12 @@ public:
     LevelStage::step(delta);
   }
 
-  bool onEvent(sf::Event &event) {
+  bool rainStep(float delta) override {
+    step(delta);
+    return true;
+  }
+
+  bool onEvent(sf::Event &event) override {
     return true;
   }
 };

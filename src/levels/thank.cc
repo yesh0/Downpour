@@ -13,7 +13,7 @@ protected:
   LevelThank(StageManager &manager, AssetManager &assets,
          const TiledWorldDef::RenDef &rendering)
       : LevelBase(manager, assets, "Thank.xml", rendering) {
-    messages.setString("Thank you for playing!");
+    messages.setString("Thank you\nfor playing!");
   }
 
 public:

@@ -7,9 +7,9 @@
 #include "forward_defs.h"
 #include "tiled_world.h"
 
-typedef LevelStage *(*LevelConstructor)(StageManager &manager,
-                                        AssetManager &assets,
-                                        const TiledWorldDef::RenDef &rendering);
+using LevelConstructor = LevelStage* (*)(StageManager &manager,
+                                         AssetManager &assets,
+                                         const TiledWorldDef::RenDef &rendering);
 
 struct LevelConstructorInfo {
   const char *name;

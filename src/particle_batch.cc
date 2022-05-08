@@ -1,10 +1,12 @@
+#include <utility>
+
 #include "particle_batch.h"
 
 using namespace std;
 using namespace sf;
 
 ParticleBatch::ParticleBatch(sf::Sprite sprite, float ratio)
-    : sprite(sprite), ratio(ratio) {
+    : sprite(std::move(sprite)), ratio(ratio) {
   setOverlap(1, 1);
 }
 
@@ -15,10 +17,10 @@ void ParticleBatch::clear(size_t reserve) {
 
 void ParticleBatch::add(sf::Vector2f position) {
   for (int j = 0; j != 3; ++j) {
-    vertices.push_back(Vertex(positions[j] + position, textureCoords[j]));
+    vertices.emplace_back(Vertex(positions[j] + position, textureCoords[j]));
   }
   for (int j = 1; j != 4; ++j) {
-    vertices.push_back(Vertex(positions[j] + position, textureCoords[j]));
+    vertices.emplace_back(positions[j] + position, textureCoords[j]);
   }
 }
 

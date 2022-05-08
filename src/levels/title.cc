@@ -19,7 +19,7 @@ public:
     return new TitleLevel{manager, assets, rendering};
   }
 
-  void step(float delta) {
+  void step(float delta) override {
     if (ended) {
       time += delta;
       switch (transitionState) {
@@ -44,7 +44,12 @@ public:
     LevelStage::step(delta);
   }
 
-  bool onMousedown(B2ObjectInfo &info) {
+  bool rainStep(float delta) override {
+    step(delta);
+    return transitionState != DELAYED;
+  }
+
+  bool onMousedown(B2ObjectInfo &info) override {
     if (info.name == "Start" && !ended) {
       ended = true;
       time = 0;

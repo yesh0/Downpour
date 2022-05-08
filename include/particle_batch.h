@@ -27,7 +27,7 @@ private:
   std::vector<ParticleBatch> batches;
   b2ParticleSystem *system;
   float ratio;
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
 public:
   ParticleBatches(b2ParticleSystem *system, sf::Sprite water, sf::Sprite elastic, float ratio);
   void update();

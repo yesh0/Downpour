@@ -6,9 +6,9 @@
 
 Stage::Stage(StageManager &manager) : manager(manager) {}
 
-StageManager::StageManager(AssetManager &assets,
+StageManager::StageManager(AssetManager &assets, RainMixer &mix,
                            const TiledWorldDef::RenDef &rendering)
-    : Stage(*this), time(0), assets(assets), rendering(rendering) {}
+    : Stage(*this), time(0), assets(assets), rendering(rendering), mixer(mix) {}
 
 void StageManager::onStart() {}
 void StageManager::onEnd() {}
@@ -36,9 +36,12 @@ void StageManager::step(float delta) {
     stages.erase(scheduledRemovals.top().second);
     scheduledRemovals.pop();
   }
+  bool raining = false;
   for (auto &i : stages) {
-    i->step(delta);
+    bool localRain = i->rainStep(delta);
+    raining = raining || localRain;
   }
+  mixer.pour(raining);
 }
 
 void StageManager::prepare(bool paused) {

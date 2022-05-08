@@ -8,6 +8,7 @@ add_executable(downpour
   levels.cc
   nine_patch.cc
   particle_batch.cc
+  rain_mixer.cc
   stage.cc
   tiled.cc
   tiled_world.cc

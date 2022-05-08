@@ -29,6 +29,17 @@ public:
       level->getRainDef().rain = true;
       LevelBase::step(delta);
     }
+    if (ended) {
+      if (delay >= 0) {
+        delay++;
+        if (delay > 100) {
+          manager.unshift("Thank");
+          manager.push("Transition");
+          manager.erase(this, 1);
+          delay = -1;
+        }
+      }
+    }
   }
 
   void onPlayerMood(PlayerState::Mood mood) override {
@@ -39,20 +50,9 @@ public:
         break;
       case LevelBase::PlayerState::HAPPY:
         ended = true;
-        delay = 0;
         break;
       default:
         break;
-      }
-    }
-    if (ended) {
-      if (delay > 0) {
-        delay++;
-        if (delay > 100) {
-          manager.unshift("Thank");
-          manager.push("Transition");
-          delay = -1;
-        }
       }
     }
   }

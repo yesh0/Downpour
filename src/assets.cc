@@ -152,7 +152,7 @@ sf::Sprite BundledTexture::getSprite(const std::string &name) {
       auto data = manager.getData(region.filename);
       if (!pair.first->second.loadFromMemory(data->data, data->size)) {
         textures.erase(pair.first);
-        return sf::Sprite();
+        return {};
       }
     }
     auto &texture = pair.first->second;
@@ -163,7 +163,7 @@ sf::Sprite BundledTexture::getSprite(const std::string &name) {
     return sprite;
   } catch (...) {
   }
-  return sf::Sprite();
+  return {};
 }
 
 NinePatchSprite BundledTexture::getNinePatch(const std::string &name) {
@@ -177,5 +177,5 @@ NinePatchSprite BundledTexture::getNinePatch(const std::string &name) {
       sf::Vector2i(region.split[0], region.split[2]),
       sf::Vector2i(region.size[0] - region.split[0] - region.split[1],
                    region.size[1] - region.split[2] - region.split[3]));
-  return NinePatchSprite(texture, rect, reg);
+  return {texture, rect, reg};
 }

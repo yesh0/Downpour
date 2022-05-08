@@ -12,7 +12,7 @@ protected:
   Level4(StageManager &manager, AssetManager &assets,
          const TiledWorldDef::RenDef &rendering)
       : LevelBase(manager, assets, "Level4.xml", rendering) {
-    messages.setString("The Pit (Night)");
+    messages.setString("The Pit\n (Night)");
   }
 
 public:
@@ -21,14 +21,14 @@ public:
     return new Level4{manager, assets, rendering};
   }
 
-  void step(float delta) {
+  void step(float delta) override {
     if (state == STARTED) {
       level->getRainDef().rain = true;
     }
     LevelBase::step(delta);
   }
 
-  void onPlayerMood(PlayerState::Mood mood) {
+  void onPlayerMood(PlayerState::Mood mood) override {
     if (state == STARTED) {
       switch (mood) {
       case LevelBase::PlayerState::HAPPY:

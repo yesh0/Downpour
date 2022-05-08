@@ -19,24 +19,24 @@ protected:
   std::unique_ptr<TiledWorld> ui, level;
   pugi::xml_document doc;
   pugi::xml_node root;
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
 
 public:
   LevelStage(StageManager &manager, AssetManager &assets,
              const std::string &config, const TiledWorldDef::RenDef &rendering);
-  void onStart();
-  void onEnd();
-  void step(float delta);
-  void prepare(bool paused);
-  bool onEvent(sf::Event &event);
+  void onStart() override;
+  void onEnd() override;
+  void step(float delta) override;
+  void prepare(bool paused) override;
+  bool onEvent(sf::Event &event) override;
   virtual bool onMousedown(B2ObjectInfo &name);
   virtual bool onMouseup(B2ObjectInfo *name);
   virtual bool onHover(sf::Vector2f position);
 };
 
-typedef LevelStage *(*LevelCreateFunc)(StageManager &manager,
-                                       AssetManager &assets,
-                                       TiledWorldDef::RenDef &rendering);
+using LevelCreateFunc = LevelStage* (*)(StageManager &manager,
+                                        AssetManager &assets,
+                                        TiledWorldDef::RenDef &rendering);
 
 struct LevelEntry {
   const char *name;

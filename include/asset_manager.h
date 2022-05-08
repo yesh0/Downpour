@@ -23,12 +23,12 @@ public:
 
 class BuiltInAssetManager : public AssetManager {
 private:
-  typedef std::map<const std::string, const AssetInfo *> AssetMap;
+  using AssetMap = std::map<const std::string, const AssetInfo *> ;
   AssetMap assetMap;
 
 public:
   BuiltInAssetManager();
-  const AssetInfo *getData(const std::string &name);
+  const AssetInfo *getData(const std::string &name) override;
 };
 
 /**
@@ -39,10 +39,8 @@ public:
 class FilesystemAssetManager : public AssetManager {
 private:
   static void deleteInfo(AssetInfo *info);
-  typedef std::unique_ptr<AssetInfo, decltype(&deleteInfo)> Ptr;
-  typedef std::map<const std::string,
-                   Ptr>
-      AssetMap;
+  using Ptr = std::unique_ptr<AssetInfo, decltype(&deleteInfo)>;
+  using AssetMap = std::map<const std::string, Ptr>;
   AssetMap assetMap;
   std::filesystem::path dir;
 

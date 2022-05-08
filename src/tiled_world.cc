@@ -111,7 +111,7 @@ void TiledWorld::step(float time) {
     pd.velocity = b2Mul(b2Rot(angle), pd.velocity);
     for (int i = 0; i < dropCount; ++i) {
       float selectedArea = uniform(rng) * rainDef.totalZoneArea;
-      b2Vec4 zone;
+      b2Vec4 zone = rainDef.rainZones[0];
       for (auto &z : rainDef.rainZones) {
         selectedArea -= z.z * z.w;
         if (selectedArea < 0) {
@@ -241,8 +241,7 @@ AnimatedSprite *TiledWorld::findSpriteByName(const std::string &name) {
 }
 
 AnimatedSprite *TiledWorld::bindSprite(b2Body *body) {
-  b2Loader.getInfo().texturedObjects.push_back(
-      make_pair(body, B2WorldInfo::TextureInfo{}));
+  b2Loader.getInfo().texturedObjects.emplace_back(body, B2WorldInfo::TextureInfo{});
   auto info = b2Loader.bindObjectInfo(body);
   auto &anim = b2AnimatedSprites.emplace_back(1);
   info->world = this;

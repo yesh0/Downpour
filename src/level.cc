@@ -55,9 +55,9 @@ static void loadRainDef(TiledWorldDef::RainDef &def, xml_node node) {
     for (auto zone : node.children("zone")) {
       float w = zone.attribute("w").as_float(),
             h = zone.attribute("h").as_float();
-      def.rainZones.push_back({
+      def.rainZones.emplace_back(
           zone.attribute("x").as_float(), zone.attribute("y").as_float(),
-          w, h}
+          w, h
       );
       def.totalZoneArea += w * h;
     }
@@ -86,7 +86,7 @@ static TiledWorld *newTiledWorld(xml_node node, AssetManager &assets,
                                  const TiledWorldDef::RenDef &rendering) {
   TiledWorldDef twd;
   loadWorldDef(twd, node, rendering);
-  TiledWorld *world =
+  auto world =
       new TiledWorld(node.attribute("tiled").value(),
                      node.attribute("atlas").value(), twd, assets);
   return world;
@@ -130,7 +130,7 @@ void LevelStage::draw(sf::RenderTarget &target,
 struct FirstQuery : public QueryCallback {
   B2ObjectInfo *info;
   FirstQuery(b2Vec2 p) : QueryCallback(p), info(nullptr) {}
-  bool callback(B2ObjectInfo &info) {
+  bool callback(B2ObjectInfo &info) override {
     this->info = &info;
     return false;
   }
