@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Downpour The Game
+Comment=A Tiny Game
+Exec=downpour
+Icon=downpour-dirt
+Terminal=false
+Type=Application
+Categories=Game;

@@ -38,6 +38,12 @@ int main(int argc, char** argv) {
   FilesystemAssetManager manager("../assets/embedded");
 #endif
 
+  auto iconData = manager.getData("downpour-dirt.png");
+  Image icon;
+  if (icon.loadFromMemory(iconData->data, iconData->size)) {
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+  }
+
   RainMixer mixer(manager, 1, 21, "waterfall.ogg");
 
   StageManager stageManager(manager, mixer, rendering);

@@ -54,6 +54,8 @@ public:
       ended = true;
       time = 0;
       transitionState = DELAYED;
+      info.world->getSprite(B2Loader::getInfo(level->getPlayer())->spriteId)
+                ->set("awake");
       return true;
     } else {
       return false;

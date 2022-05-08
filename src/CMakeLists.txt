@@ -41,3 +41,7 @@ target_include_directories(downpour PRIVATE
   "${SFML_SOURCE_DIR}/include"
   "../include"
 )
+
+install(TARGETS downpour DESTINATION /usr/bin)
+install(FILES ../assets/downpour.desktop DESTINATION /usr/share/applications)
+install(FILES ../assets/embedded/downpour-dirt.png DESTINATION /usr/share/pixmaps)
