@@ -61,19 +61,17 @@ TiledLayer::TiledLayer(const std::string &name, size_t width, size_t height,
       size_t textureW = tiledSet.tileWidth, textureH = tiledSet.tileHeight;
       size_t textureX = textureW * tileSetX, textureY = textureH * tileSetY;
       size_t tileX = tileWidth * x, tileY = tileHeight * y;
-      verts.push_back(
-          Vertex(Vector2f(tileX, tileY), Vector2f(textureX, textureY)));
-      verts.push_back(Vertex(Vector2f(tileX + tileWidth, tileY),
-                             Vector2f(textureX + textureW, textureY)));
-      verts.push_back(Vertex(Vector2f(tileX, tileY + tileHeight),
-                             Vector2f(textureX, textureY + textureH)));
-      verts.push_back(Vertex(Vector2f(tileX + tileWidth, tileY),
-                             Vector2f(textureX + textureW, textureY)));
-      verts.push_back(Vertex(Vector2f(tileX, tileY + tileHeight),
-                             Vector2f(textureX, textureY + textureH)));
-      verts.push_back(
-          Vertex(Vector2f(tileX + tileWidth, tileY + tileHeight),
-                 Vector2f(textureX + textureW, textureY + textureH)));
+      verts.emplace_back(Vector2f(tileX, tileY), Vector2f(textureX, textureY));
+      verts.emplace_back(Vector2f(tileX + tileWidth, tileY),
+                         Vector2f(textureX + textureW, textureY));
+      verts.emplace_back(Vector2f(tileX, tileY + tileHeight),
+                         Vector2f(textureX, textureY + textureH));
+      verts.emplace_back(Vector2f(tileX + tileWidth, tileY),
+                         Vector2f(textureX + textureW, textureY));
+      verts.emplace_back(Vector2f(tileX, tileY + tileHeight),
+                         Vector2f(textureX, textureY + textureH));
+      verts.emplace_back(Vector2f(tileX + tileWidth, tileY + tileHeight),
+                         Vector2f(textureX + textureW, textureY + textureH));
     }
   }
 }
@@ -110,7 +108,7 @@ static void parseTileData(const string &data, vector<size_t> &tiles) {
   for (size_t i = 0; i < data.size(); ++i) {
     try {
       size_t offset;
-      size_t tile = svtov<size_t>(string_view{data}.substr(i), offset);
+      auto tile = svtov<size_t>(string_view{data}.substr(i), offset);
       tiles.push_back(tile);
       i += offset;
     } catch (...) {
@@ -157,7 +155,7 @@ TiledMap TiledLoader::load(std::string filename, B2Loader &b2Loader) {
       }
     }
     b2Loader.load(mapNode);
-    return TiledMap(std::move(layers));
+    return {std::move(layers)};
   } else {
     return TiledMap{};
   }

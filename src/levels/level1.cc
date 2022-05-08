@@ -23,7 +23,7 @@ public:
     return new Level1{manager, assets, rendering};
   }
 
-  void step(float delta) {
+  void step(float delta) override {
     if (state == STARTED) {
       level->getRainDef().rain = true;
     }
@@ -39,7 +39,7 @@ public:
     }
   }
 
-  void onPlayerMood(PlayerState::Mood mood) {
+  void onPlayerMood(PlayerState::Mood mood) override {
     if (state == STARTED) {
       switch (mood) {
       case LevelBase::PlayerState::HAPPY:

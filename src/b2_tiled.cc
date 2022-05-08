@@ -18,9 +18,9 @@ b2Vec2 rotateBy(b2Vec2 vec, float radians) {
 b2Vec2 b2Vec2FromString(const string_view &point) {
   auto i = point.find(',');
   if (i != string::npos) {
-    return b2Vec2(svtov<float>(point), svtov<float>(point.substr(i + 1)));
+    return {svtov<float>(point), svtov<float>(point.substr(i + 1))};
   } else {
-    return b2Vec2();
+    return {};
   }
 }
 
@@ -39,13 +39,11 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
     b2Body *body = nullptr;
     auto name = object.attribute("name");
     b2Vec2 offset{0, 0};
-    bool objectExists = false;
     if (name) {
       auto bodyI = localNamedObjects.find(name.value());
       if (bodyI != localNamedObjects.end()) {
         body = bodyI->second;
         offset = -body->GetPosition();
-        objectExists = true;
       }
     }
 
@@ -157,13 +155,13 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
                   make_pair(line.substr(0, sep), line.substr(sep + 1)));
             }
           }
-          info.texturedObjects.push_back(make_pair(
+          info.texturedObjects.emplace_back(
               body,
               B2WorldInfo::TextureInfo{names, conditionals, (float)width,
                                        (float)height, !ninePatched.empty(),
                                        delay.attribute("value").as_float(1),
                                        {offset.x / ratio, offset.y / ratio},
-                                       type == B2ObjectInfo::BOX ? rotation : 0}));
+                                       type == B2ObjectInfo::BOX ? rotation : 0});
         }
       } else {
         bd.position.Set(x * ratio, y * ratio);
@@ -171,7 +169,7 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
         type = B2ObjectInfo::Type::POINT;
       }
     }
-    if (!object.attribute("name").empty()) {
+    if (!object.attribute("name").empty() && body != nullptr) {
       auto i = localNamedObjects.insert(
           make_pair(string(object.attribute("name").value()), body));
       if (names) {

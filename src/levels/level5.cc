@@ -26,7 +26,7 @@ public:
     return new Level5{manager, assets, rendering};
   }
 
-  void step(float delta) {
+  void step(float delta) override {
     if (state == STARTED) {
       level->getRainDef().rain = true;
       LevelBase::step(delta);

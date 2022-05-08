@@ -21,9 +21,9 @@ struct TiledSet {
 
 class TiledLoader {
 public:
-  typedef std::unordered_map<std::string, sf::Texture> TextureMap;
-  typedef std::map<std::string, TiledSet> TileSetMap;
-  typedef std::map<size_t, TiledSet, std::greater<size_t>> UsedSets;
+  using TextureMap = std::unordered_map<std::string, sf::Texture>;
+  using TileSetMap = std::map<std::string, TiledSet>;
+  using UsedSets = std::map<size_t, TiledSet, std::greater<>>;
 
 private:
   std::unordered_map<std::string, sf::Texture> textures;
@@ -41,7 +41,7 @@ private:
   std::string name;
   std::vector<std::vector<sf::Vertex>> vertices;
   std::vector<const sf::Texture *> textures;
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
 
 public:
   TiledLayer(const std::string &name, size_t width, size_t height,
@@ -57,7 +57,7 @@ private:
   std::vector<TiledLayer> layers;
   TiledMap() = default;
   TiledMap(std::vector<TiledLayer> &&layers);
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
 };
 
 #endif /* !DOWNPOUR_TILED_H */

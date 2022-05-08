@@ -12,7 +12,7 @@ private:
   const sf::Texture *texture;
   sf::IntRect textureRect;
   sf::IntRect center;
-  virtual void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
   void updateVertices();
 public:
   NinePatchSprite(const sf::Texture &texture, const sf::IntRect &clip,

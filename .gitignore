@@ -1,4 +1,5 @@
 build/**
 .cache/**
 assets/textures/*
+assets/sounds/*
 include/builtin_assets.cc

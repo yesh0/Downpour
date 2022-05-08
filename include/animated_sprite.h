@@ -14,7 +14,7 @@ private:
   sf::Clock clock;
   const float delay;
   std::string state;
-  void draw(sf::RenderTarget& target, const sf::RenderStates& states) const;
+  void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
 public:
   AnimatedSprite(float delay);
   void push(sf::Sprite *frame);

@@ -52,11 +52,11 @@ struct TiledWorldDef {
 
 class TiledContactFilter : public b2ContactFilter {
 public:
-  bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB);
+  bool ShouldCollide(b2Fixture *fixtureA, b2Fixture *fixtureB) override;
   bool ShouldCollide(b2Fixture *fixture, b2ParticleSystem *particleSystem,
-                     int32 particleIndex);
+                     int32 particleIndex) override;
   bool ShouldCollide(b2ParticleSystem *particleSystem, int32 particleIndexA,
-                     int32 particleIndexB);
+                     int32 particleIndexB) override;
 };
 
 class QueryCallback : public b2QueryCallback {
@@ -67,8 +67,8 @@ protected:
 
 public:
   virtual bool callback(B2ObjectInfo &info) = 0;
-  bool ReportFixture(b2Fixture *fixture);
-  bool ShouldQueryParticleSystem(const b2ParticleSystem *particleSystem);
+  bool ReportFixture(b2Fixture *fixture) override;
+  bool ShouldQueryParticleSystem(const b2ParticleSystem *particleSystem) override;
   void setPPM(float ppm);
 };
 
@@ -96,7 +96,7 @@ private:
   std::map<std::string, std::size_t> namedSprites;
   TiledWorldDef::RainDef rainDef;
   TiledWorldDef::RenDef renDef;
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
 
 public:
   TiledWorld(const std::string &tiledFile,

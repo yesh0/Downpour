@@ -34,7 +34,7 @@ public:
     b2Body *body = nullptr;
     float hw = 0;
   };
-  typedef std::list<Node> NodeList;
+  using NodeList = std::list<Node>;
   struct Plank {
     NinePatchSprite sprite;
     NodeList::iterator start;
@@ -72,7 +72,7 @@ protected:
   NodeList nodes;
   std::vector<Plank> sprites;
   sf::Sprite node;
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
   void bindJoint(Plank &p, b2Body *body, float hw);
   std::pair<b2Body *, float> addBody(Plank &p);
   NodeList::iterator findNode(sf::Vector2f pos, float scale);
@@ -83,13 +83,13 @@ protected:
 public:
   LevelBase(StageManager &manager, AssetManager &assets,
             const std::string &config, const TiledWorldDef::RenDef &rendering);
-  void prepare(bool paused);
-  void step(float delta);
-  bool rainStep(float delta);
+  void prepare(bool paused) override;
+  void step(float delta) override;
+  bool rainStep(float delta) override;
   LevelBaseDef loadConfig();
-  bool onEvent(sf::Event &event);
-  bool onMousedown(B2ObjectInfo &name);
-  bool onHover(sf::Vector2f position);
+  bool onEvent(sf::Event &event) override;
+  bool onMousedown(B2ObjectInfo &name) override;
+  bool onHover(sf::Vector2f position) override;
   void setMessage(const std::string &message);
   void restart();
   virtual void onPlayerMood(PlayerState::Mood mood);

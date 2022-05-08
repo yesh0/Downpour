@@ -89,7 +89,6 @@ bool LevelBase::onEvent(sf::Event &event) {
 
   float scale = level->getRenDef().drawPPM / level->getRenDef().texturePPM;
   Vector2f pos;
-  const float radius = node.getTextureRect().width * 0.5 * scale;
   NodeList::iterator node;
   switch (event.type) {
   case Event::EventType::MouseButtonPressed:
@@ -138,7 +137,7 @@ bool LevelBase::onEvent(sf::Event &event) {
       pos = {(float)event.mouseButton.x, (float)event.mouseButton.y};
       if ((start - pos).lengthSq() <=
           def.plankMaxLength * def.plankMaxLength * scale * scale) {
-        NodeList::iterator end = findNode(pos, 2);
+        auto end = findNode(pos, 2);
         if (end == nodes.end()) {
           /* The user does not seem to want to connect to a existing node. */
           nodes.push_front({pos, 0, nullptr});
@@ -201,7 +200,7 @@ void LevelBase::step(float delta) {
     auto playerBody = level->getPlayer();
     if (playerBody != nullptr) {
       auto info = B2Loader::getInfo(playerBody);
-      PlayerState::Mood next = player.mood;
+      PlayerState::Mood next;
       if (player.anger < 0) {
         next = PlayerState::HAPPY;
       } else if (player.anger < def.angerThresholds[0]) {
@@ -274,7 +273,6 @@ bool LevelBase::onMousedown(B2ObjectInfo &info) {
       info.world->getSprite(info.spriteId)->set("end");
       for (auto &s : sprites) {
         auto p = addBody(s);
-        float scale = 1 / level->getRenDef().drawPPM;
         if (s.start->body == nullptr) {
           s.start->body = p.first;
           s.start->hw = p.second;

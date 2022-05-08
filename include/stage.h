@@ -18,11 +18,11 @@ class Stage : public sf::Drawable {
 protected:
   StageManager &manager;
   Stage(StageManager &manager);
-  virtual void draw(sf::RenderTarget &target,
-                    const sf::RenderStates &states) const = 0;
+  void draw(sf::RenderTarget &target,
+            const sf::RenderStates &states) const override = 0;
 
 public:
-  virtual ~Stage() = default;
+  ~Stage() override = default;
   virtual void onStart() = 0;
   virtual void onEnd() = 0;
   virtual void step(float delta) = 0;
@@ -48,8 +48,8 @@ public:
 
 class StageManager : public Stage {
 private:
-  typedef std::list<std::unique_ptr<Stage>> Stages;
-  typedef std::pair<float, Stages::iterator> TimedStage;
+  using Stages = std::list<std::unique_ptr<Stage>>;
+  using TimedStage = std::pair<float, Stages::iterator>;
   struct TimedStageLess
       : public std::binary_function<TimedStage, TimedStage, bool> {
     bool operator()(const TimedStage &a, const TimedStage &b) {
@@ -68,15 +68,15 @@ private:
   RainMixer &mixer;
 
 protected:
-  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+  void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
 
 public:
   StageManager(AssetManager&, RainMixer &mixer, const TiledWorldDef::RenDef&);
-  void onStart();
-  void onEnd();
-  void step(float delta);
-  void prepare(bool paused);
-  bool onEvent(sf::Event &event);
+  void onStart() override;
+  void onEnd() override;
+  void step(float delta) override;
+  void prepare(bool paused) override;
+  bool onEvent(sf::Event &event) override;
   void push(std::unique_ptr<Stage> stage);
   Stage *push(const std::string &name);
   void unshift(std::unique_ptr<Stage> stage);
