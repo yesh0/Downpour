@@ -85,6 +85,7 @@ public:
             const std::string &config, const TiledWorldDef::RenDef &rendering);
   void prepare(bool paused);
   void step(float delta);
+  bool rainStep(float delta);
   LevelBaseDef loadConfig();
   bool onEvent(sf::Event &event);
   bool onMousedown(B2ObjectInfo &name);

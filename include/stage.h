@@ -10,6 +10,7 @@
 
 #include "forward_defs.h"
 #include "asset_manager.h"
+#include "rain_mixer.h"
 #include "tiled_world.h"
 #include "levels.h"
 
@@ -25,6 +26,17 @@ public:
   virtual void onStart() = 0;
   virtual void onEnd() = 0;
   virtual void step(float delta) = 0;
+  /**
+   * @brief step() and returns whether the stage is raining
+   * 
+   * @param delta as is in delta
+   * @return true when raining
+   * @return false otherwise
+   */
+  virtual bool rainStep(float delta) {
+    step(delta);
+    return false;
+  }
   /**
    * @brief A workaround since sf::Drawable::draw is marked const
    *
@@ -53,12 +65,13 @@ private:
   std::less<int> l;
   std::priority_queue<TimedStage, std::vector<TimedStage>, TimedStageLess>
       scheduledRemovals;
+  RainMixer &mixer;
 
 protected:
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
 
 public:
-  StageManager(AssetManager&, const TiledWorldDef::RenDef&);
+  StageManager(AssetManager&, RainMixer &mixer, const TiledWorldDef::RenDef&);
   void onStart();
   void onEnd();
   void step(float delta);

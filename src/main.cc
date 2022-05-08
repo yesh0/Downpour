@@ -9,6 +9,7 @@
 #include "b2_tiled.h"
 #include "level.h"
 #include "particle_batch.h"
+#include "rain_mixer.h"
 #include "rate_limiter.h"
 #include "stage.h"
 #include "tiled.h"
@@ -37,7 +38,9 @@ int main(int argc, char** argv) {
   FilesystemAssetManager manager("../assets/embedded");
 #endif
 
-  StageManager stageManager(manager, rendering);
+  RainMixer mixer(manager, 1, 21, "waterfall.ogg");
+
+  StageManager stageManager(manager, mixer, rendering);
   if (argc == 1) {
     stageManager.push("Title");
   } else {
@@ -62,6 +65,7 @@ int main(int argc, char** argv) {
     stageManager.prepare(false);
     window.draw(stageManager);
     window.display();
+    mixer.drop();
     delta = limiter();
   }
   window.close();

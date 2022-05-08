@@ -21,12 +21,13 @@ LevelBase::LevelBase(StageManager &manager, AssetManager &assets,
   sprite.setScale({scale, scale});
   messages.setOutlineColor(Color::Black);
   messages.setFillColor(Color::White);
-  messages.setOutlineThickness(3);
-  messages.setCharacterSize(48);
-  auto f = assets.getData("NimbusRoman-Regular.otf");
+  messages.setOutlineThickness(4);
+  messages.setCharacterSize(36);
+  auto f = assets.getData("PressStart2P-Regular.ttf");
   if (!font.loadFromMemory(f->data, f->size)) {
     throw runtime_error("Font load failed");
   }
+  font.setSmooth(false);
   messages.setFont(font);
   messages.setPosition({(float)level->getRenDef().screenW - 20,
                         (float)level->getRenDef().screenH - 20});
@@ -171,6 +172,11 @@ void LevelBase::breakJoints() {
       }
     }
   }
+}
+
+bool LevelBase::rainStep(float delta) {
+  step(delta);
+  return state != ENDED;
 }
 
 void LevelBase::step(float delta) {

@@ -6,16 +6,16 @@
     <particles color-mixing="1" damping="1" density="1" destroy-by-age="true"
                ejection="1" elastic="1" gravity-scale="2"
                max-count="2048" powder="1" pressure="1"
-               radius="0.3" repulsive="1" spring="1"
+               radius="0.1" repulsive="1" spring="1"
                static-iterations="1" static-relaxation="1"
                static="1" strict-contact="1"
                surface-tension="1" surface-normal="1"
                viscous="1" />
     <rendering>
       <shader>rain.glsl</shader>
-      <scale texture="10" rain="2.5" />
+      <scale texture="10" rain="1.5" />
     </rendering>
-    <rain rain="false" lifetime="1" drop-per-second="2000"
+    <rain rain="true" lifetime="2" drop-per-second="10"
           angular-random="0" velocity-random="0">
       <velocity x="0" y="500" />
       <zone x="0" y="-16" w="128" h="16" />

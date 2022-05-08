@@ -12,7 +12,7 @@ protected:
   Level4(StageManager &manager, AssetManager &assets,
          const TiledWorldDef::RenDef &rendering)
       : LevelBase(manager, assets, "Level4.xml", rendering) {
-    messages.setString("The Pit (Night)");
+    messages.setString("The Pit\n (Night)");
   }
 
 public:
