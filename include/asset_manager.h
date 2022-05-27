@@ -10,17 +10,29 @@
 
 #include "nine_patch.h"
 
+/**
+ * @brief Semantically a "file"
+ */
 struct AssetInfo {
   const char *const name;
   const unsigned char *const data;
   const size_t size;
 };
 
+/**
+ * @brief An interface for asset R/W
+ */
 class AssetManager {
 public:
-  virtual const AssetInfo *getData(const std::string &name);
+  virtual const AssetInfo *getData(const std::string &name) = 0;
 };
 
+/**
+ * @brief An "AssetManager" to be used with bundled resources
+ *
+ * See assets/file_embedder.cc for how files are embedded.
+ * It is supposed to be used when releasing into a single executable.
+ */
 class BuiltInAssetManager : public AssetManager {
 private:
   using AssetMap = std::map<const std::string, const AssetInfo *> ;
@@ -49,6 +61,19 @@ public:
   const AssetInfo *getData(const std::string &name);
 };
 
+/**
+ * @brief Extracts separate textures from texture bundles
+ * 
+ * Textures are bundled using GDX Texture Packer, that is, many images are gathered together
+ * into a single large image.
+ *
+ * This class loads the "atlas" info for the larger image, and extracts portions of the larger
+ * image into the needed real textures.
+ *
+ * For example, you may open assets/Downpour.tpproj with:
+ * https://github.com/crashinvaders/gdx-texture-packer-gui/
+ * for an overview.
+ */
 class BundledTexture {
 private:
   struct TextureRegion {
@@ -66,8 +91,26 @@ private:
                            const int *size, const int *split);
 
 public:
+  /**
+   * @brief Construct a new Bundled Texture object
+   * 
+   * @param filename the .atlas filename
+   * @param manager the AssetManager
+   */
   BundledTexture(const std::string &filename, AssetManager &manager);
+  /**
+   * @brief Get the Sprite object
+   * 
+   * @param name the name of the texture in the .atlas file
+   * @return sf::Sprite the sprite
+   */
   sf::Sprite getSprite(const std::string &name);
+  /**
+   * @brief Get the Nine Patch object
+   * 
+   * @param name the name of the texture in the .atlas file
+   * @return NinePatchSprite see NinePatchSprite
+   */
   NinePatchSprite getNinePatch(const std::string &name);
 };
 

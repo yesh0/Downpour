@@ -74,11 +74,6 @@ Stage *StageManager::unshift(const std::string &name) {
   return raw;
 }
 
-void StageManager::pop() {
-  stages.rbegin()->get()->onEnd();
-  stages.pop_back();
-}
-
 void StageManager::erase(Stage *stage) { erase(stage, 0.01); }
 
 void StageManager::erase(Stage *stage, float when) {

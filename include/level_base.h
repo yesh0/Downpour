@@ -79,6 +79,8 @@ protected:
   std::list<b2Joint *> joints;
 
   void breakJoints();
+  void stepPlayerMood();
+  void stepPlayerState();
 
 public:
   LevelBase(StageManager &manager, AssetManager &assets,

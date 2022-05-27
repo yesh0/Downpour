@@ -63,9 +63,12 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
           centeredSprite(textureBundle.getSprite((def.particleTexture))),
           centeredSprite(textureBundle.getSprite((def.elasticParticleTexture))),
           def.rendering.drawPPM) {
+  // Rendering scales
   particleBatches.setOverlap(renDef.rainScale);
   float scale = renDef.drawPPM / renDef.texturePPM;
   map.setScale(Vector2f(scale, scale));
+
+  // Shader loading
   auto shaderFile = manager.getData(renDef.shader);
   sf::MemoryInputStream shaderStream;
   shaderStream.open(shaderFile->data, shaderFile->size);
@@ -74,12 +77,16 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
       !rainShader.loadFromStream(shaderStream, Shader::Type::Fragment)) {
     throw runtime_error("Give up");
   }
+
+  // Pick up info from B2Loader
   auto &todoInfo = b2Loader.getInfo();
   for (auto &p : todoInfo.texturedObjects) {
     auto &anim = b2AnimatedSprites.emplace_back(p.second.delay);
+    // Animation frames
     for (auto &name : p.second.names) {
       anim.push(insertByName(p.second, name, scale, p.second.ninePatched));
     }
+    // State frames (not animated, but can be selected by setting a state afterwards)
     for (auto &cond : p.second.conditionals) {
       anim.insert(cond.first, insertByName(p.second, cond.second, scale,
                                            p.second.ninePatched));
@@ -92,40 +99,49 @@ TiledWorld::TiledWorld(const std::string &tiledFile,
       info->spriteId = b2AnimatedSprites.size() - 1;
     }
   }
+
   world.SetContactFilter(&filter);
 }
 
 void TiledWorld::step(float time) {
   if (rainDef.rain) {
-    float drops = rainDef.dropPerSecond * time;
-    int dropCount = (int)(drops);
-    if (uniform(rng) < drops - dropCount) {
-      dropCount++;
-    }
-    b2ParticleDef pd;
-    pd.flags |= b2_fixtureContactFilterParticle;
-    pd.lifetime = rainDef.rainLifetime;
-    pd.velocity = rainDef.rainVelocity / renDef.texturePPM;
-    pd.velocity *= (2 * uniform(rng) - 1) * rainDef.rainVelocityRandom + 1;
-    float angle = rainDef.rainAngularRandom * (2 * uniform(rng) - 1);
-    pd.velocity = b2Mul(b2Rot(angle), pd.velocity);
-    for (int i = 0; i < dropCount; ++i) {
-      float selectedArea = uniform(rng) * rainDef.totalZoneArea;
-      b2Vec4 zone = rainDef.rainZones[0];
-      for (auto &z : rainDef.rainZones) {
-        selectedArea -= z.z * z.w;
-        if (selectedArea < 0) {
-          zone = z;
-          break;
-        }
-      }
-      pd.position.Set(zone.x + uniform(rng) * zone.z,
-                      zone.y + uniform(rng) * zone.w);
-      pd.position = pd.position / renDef.texturePPM;
-      particleSystem->CreateParticle(pd);
-    }
+  float drops = rainDef.dropPerSecond * time;
+  int dropCount = (int)(drops);
+  if (uniform(rng) < drops - dropCount) {
+    dropCount++;
+  }
+    createRainParticles(dropCount);
   }
   world.Step(time, 6, 2);
+  breakBuiltinJoints();
+}
+
+void TiledWorld::createRainParticles(int drops) {
+  b2ParticleDef pd;
+  pd.flags |= b2_fixtureContactFilterParticle;
+  pd.lifetime = rainDef.rainLifetime;
+  pd.velocity = rainDef.rainVelocity / renDef.texturePPM;
+  pd.velocity *= (2 * uniform(rng) - 1) * rainDef.rainVelocityRandom + 1;
+  float angle = rainDef.rainAngularRandom * (2 * uniform(rng) - 1);
+  pd.velocity = b2Mul(b2Rot(angle), pd.velocity);
+  for (int i = 0; i < drops; ++i) {
+    float selectedArea = uniform(rng) * rainDef.totalZoneArea;
+    b2Vec4 zone = rainDef.rainZones[0];
+    for (auto &z : rainDef.rainZones) {
+      selectedArea -= z.z * z.w;
+      if (selectedArea < 0) {
+        zone = z;
+        break;
+      }
+    }
+    pd.position.Set(zone.x + uniform(rng) * zone.z,
+                    zone.y + uniform(rng) * zone.w);
+    pd.position = pd.position / renDef.texturePPM;
+    particleSystem->CreateParticle(pd);
+  }
+}
+
+void TiledWorld::breakBuiltinJoints() {
   auto &joints = b2Loader.getJoints();
   auto prev = joints.before_begin();
   for (auto i = joints.begin(); i != joints.end();) {

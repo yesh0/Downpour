@@ -35,6 +35,8 @@ void B2Loader::loadIntoWorld(pugi::xml_node &group, b2BodyDef &bd,
   unordered_map<string, b2Body*> &localNamedObjects =
     names ? namedObjects : localNames;
 
+  // Well I am using Tiled files but Tiled format is not that elegant.
+  // So here you are, a real hotchpotch.
   for (auto object : group.children("object")) {
     b2Body *body = nullptr;
     auto name = object.attribute("name");

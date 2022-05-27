@@ -16,6 +16,8 @@ void ParticleBatch::clear(size_t reserve) {
 }
 
 void ParticleBatch::add(sf::Vector2f position) {
+  // To render in modern OpenGL with Triangles,
+  // we need to split a rectangle into two triangles, thus using up six vertices.
   for (int j = 0; j != 3; ++j) {
     vertices.emplace_back(Vertex(positions[j] + position, textureCoords[j]));
   }

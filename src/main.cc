@@ -47,17 +47,21 @@ int main(int argc, char** argv) {
   RainMixer mixer(manager, 1, 21, "waterfall.ogg");
 
   StageManager stageManager(manager, mixer, rendering);
+#ifdef BUNDLE_DOWNPOUR
+  /* Release */
+  stageManager.push("Title");
+#else
+  /* Debug */
   if (argc == 1) {
     stageManager.push("Title");
   } else {
     stageManager.push(argv[1]);
   }
+#endif
 
-  size_t frames = 0;
   RateLimiter limiter{60};
   float delta = 1. / 60;
   while (window.isOpen()) {
-    ++frames;
     Event event;
     while (window.pollEvent(event)) {
       if (event.type == Event::Closed) {
@@ -66,14 +70,17 @@ int main(int argc, char** argv) {
         stageManager.onEvent(event);
       }
     }
+
     window.clear();
     stageManager.step(delta);
     stageManager.prepare(false);
     window.draw(stageManager);
     window.display();
+
     mixer.drop();
     delta = limiter();
   }
+
   window.close();
   return 0;
 }

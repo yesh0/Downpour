@@ -178,45 +178,55 @@ bool LevelBase::rainStep(float delta) {
   return state != ENDED;
 }
 
+void LevelBase::stepPlayerMood() {
+  auto &particleSystem = level->getParticleSystem();
+  const int count = particleSystem.GetBodyContactCount();
+  auto contact = particleSystem.GetBodyContacts();
+  for (int i = 0; i != count; ++i, ++contact) {
+    auto info = B2Loader::getInfo(contact->body);
+    if (info != nullptr) {
+      if (info->name == "Player"
+          && particleSystem.GetGroupBuffer()[contact->index] == nullptr) {
+        player.anger++;
+        player.lastHit.restart();
+      }
+    }
+  }
+  if (player.lastHit.getElapsedTime().asMilliseconds() > 1000) {
+    player.anger--;
+  }
+}
+
+void LevelBase::stepPlayerState() {
+  auto playerBody = level->getPlayer();
+  if (playerBody != nullptr) {
+    auto info = B2Loader::getInfo(playerBody);
+    PlayerState::Mood next;
+    if (player.anger < 0) {
+      next = PlayerState::HAPPY;
+    } else if (player.anger < def.angerThresholds[0]) {
+      next = PlayerState::ASLEEP;
+    } else if (player.anger < def.angerThresholds[1]) {
+      next = PlayerState::AWAKE;
+    } else {
+      next = PlayerState::SAD;
+    }
+    if (next != player.mood) {
+      info->world->getSprite(info->spriteId)
+          ->set(PlayerState::MOOD_NAMES[next]);
+      player.mood = next;
+      onPlayerMood(next);
+    }
+  }
+}
+
 void LevelBase::step(float delta) {
   if (state == STARTED) {
     breakJoints();
-    auto &particleSystem = level->getParticleSystem();
-    const int count = particleSystem.GetBodyContactCount();
-    auto contact = particleSystem.GetBodyContacts();
-    for (int i = 0; i != count; ++i, ++contact) {
-      auto info = B2Loader::getInfo(contact->body);
-      if (info != nullptr) {
-        if (info->name == "Player"
-            && particleSystem.GetGroupBuffer()[contact->index] == nullptr) {
-          player.anger++;
-          player.lastHit.restart();
-        }
-      }
-    }
-    if (player.lastHit.getElapsedTime().asMilliseconds() > 1000) {
-      player.anger--;
-    }
-    auto playerBody = level->getPlayer();
-    if (playerBody != nullptr) {
-      auto info = B2Loader::getInfo(playerBody);
-      PlayerState::Mood next;
-      if (player.anger < 0) {
-        next = PlayerState::HAPPY;
-      } else if (player.anger < def.angerThresholds[0]) {
-        next = PlayerState::ASLEEP;
-      } else if (player.anger < def.angerThresholds[1]) {
-        next = PlayerState::AWAKE;
-      } else {
-        next = PlayerState::SAD;
-      }
-      if (next != player.mood) {
-        info->world->getSprite(info->spriteId)
-            ->set(PlayerState::MOOD_NAMES[next]);
-        player.mood = next;
-        onPlayerMood(next);
-      }
-    }
+
+    stepPlayerMood();
+
+    stepPlayerState();
   }
   LevelStage::step(delta);
 }

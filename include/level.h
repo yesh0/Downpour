@@ -10,7 +10,7 @@
 #include "tiled_world.h"
 
 /**
- * @brief Loads level config, handles basic mouse events
+ * @brief Loads level config, handles and passes mouse events around
  * 
  * The barebone level consists of two parts: `ui` and `level`.
  */

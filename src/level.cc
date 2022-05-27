@@ -127,6 +127,9 @@ void LevelStage::draw(sf::RenderTarget &target,
   target.draw(*ui);
 }
 
+/**
+ * @brief A QueryCallback implementation that outputs the first yielded element
+ */
 struct FirstQuery : public QueryCallback {
   B2ObjectInfo *info;
   FirstQuery(b2Vec2 p) : QueryCallback(p), info(nullptr) {}

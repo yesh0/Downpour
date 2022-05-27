@@ -14,6 +14,9 @@
 #include "tiled_world.h"
 #include "levels.h"
 
+/**
+ * @brief Semantically a stage
+ */
 class Stage : public sf::Drawable {
 protected:
   StageManager &manager;
@@ -46,6 +49,11 @@ public:
   virtual bool onEvent(sf::Event &event) = 0;
 };
 
+/**
+ * @brief Manages all stages displayed, plays downpour sound when any of them are raining
+ *
+ * Stages are layered.
+ */
 class StageManager : public Stage {
 private:
   using Stages = std::list<std::unique_ptr<Stage>>;
@@ -69,6 +77,8 @@ private:
 
 protected:
   void draw(sf::RenderTarget &target, const sf::RenderStates &states) const override;
+  void push(std::unique_ptr<Stage> stage);
+  void unshift(std::unique_ptr<Stage> stage);
 
 public:
   StageManager(AssetManager&, RainMixer &mixer, const TiledWorldDef::RenDef&);
@@ -77,12 +87,34 @@ public:
   void step(float delta) override;
   void prepare(bool paused) override;
   bool onEvent(sf::Event &event) override;
-  void push(std::unique_ptr<Stage> stage);
+
+  /**
+   * @brief Creates the stage of "name" and pushes it to the front
+   * 
+   * @param name 
+   * @return Stage* 
+   */
   Stage *push(const std::string &name);
-  void unshift(std::unique_ptr<Stage> stage);
+  /**
+   * @brief Pushes the stage to the back
+   * 
+   * @param stage 
+   */
+  /**
+   * @brief Creates the stage of "name" and pushes it to the back
+   * 
+   * @param name
+   * @return Stage* 
+   */
   Stage *unshift(const std::string &name);
-  void pop();
+
   void erase(Stage *stage);
+  /**
+   * @brief Erase a stage after some time
+   * 
+   * @param stage the stage
+   * @param when delay in seconds
+   */
   void erase(Stage *stage, float when);
 };
 

@@ -13,12 +13,18 @@
 
 class TiledMap;
 
+/**
+ * @brief File info for image files that are split into "tiles" in Tiled maps
+ */
 struct TiledSet {
   const std::string filename;
   const size_t tileWidth, tileHeight;
   const size_t columns, rows;
 };
 
+/**
+ * @brief Loads a Tiled map into a Tiledmap
+ */
 class TiledLoader {
 public:
   using TextureMap = std::unordered_map<std::string, sf::Texture>;
@@ -33,9 +39,19 @@ private:
 
 public:
   TiledLoader(AssetManager &manager);
+  /**
+   * @brief Loads a tiled map (from tiled layers) and passes object layers to B2Loader
+   * 
+   * @param filename the Tiled file
+   * @param b2Loader the b2loader
+   * @return TiledMap 
+   */
   TiledMap load(std::string filename, B2Loader &b2Loader);
 };
 
+/**
+ * @brief A layer of the Tiled map
+ */
 class TiledLayer : public sf::Drawable, public sf::Transformable {
 private:
   std::string name;
@@ -51,6 +67,11 @@ public:
              const TiledLoader::TextureMap &textureMap);
 };
 
+/**
+ * @brief Layers of Tiled map layers, i.e. a Tiled map
+ *
+ * It is ready to be rendered as a Tiled map.
+ */
 class TiledMap : public sf::Drawable, public sf::Transformable {
   friend class TiledLoader;
 private:

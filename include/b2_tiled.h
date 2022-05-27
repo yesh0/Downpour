@@ -16,6 +16,9 @@
 
 #include "forward_defs.h"
 
+/**
+ * @brief World info to be used in TiledWorld
+ */
 struct B2WorldInfo {
   struct TextureInfo {
     const std::vector<std::string> names;
@@ -31,6 +34,9 @@ struct B2WorldInfo {
   b2Body *player;
 };
 
+/**
+ * @brief Object info, b2Body.GetUserData will point to their info (if there is one)
+ */
 struct B2ObjectInfo {
   const std::string &name;
   b2Body * const body;
@@ -43,6 +49,18 @@ struct B2ObjectInfo {
   unsigned int collisionGroup;
 };
 
+/**
+ * @brief Loads objects in a Tiled file into b2World and extracts their texture info
+ *
+ * This class handles object loading, if there is extract info to the object,
+ * it is put into a B2ObjectInfo and is linked to with b2Body.GetUserData.
+ * But since it does not create or render textures, it extracts such info
+ * into B2WorldInfo to be used later (in TiledWorld).
+ *
+ * The format of the Tiled file and property requirements are not documented and I do not
+ * plan to. See assets/embedded/...tmx for some examples. You should be able to open them
+ * with the Tiled editor: https://github.com/mapeditor/tiled .
+ */
 class B2Loader {
 private:
   B2WorldInfo info;
