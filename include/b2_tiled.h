@@ -75,6 +75,13 @@ private:
   std::pair<b2Joint *, float>
   parseJointIntoWorld(const std::string_view &jointDef);
 
+  void initPolygonShape(pugi::xml_node object, float x, float y,
+                        b2Body** bodyPtr, b2BodyDef &def, b2Vec2 &offset);
+  B2ObjectInfo::Type insertFixture(pugi::xml_node object, b2Vec2 offset, b2Body *body,
+                                   int &width, int &height, float rotation);
+  void initTextures(pugi::xml_node object, b2Body *body, B2ObjectInfo::Type type,
+                    b2Vec2 offset, float rotation, int width, int height);
+
 public:
   B2Loader(b2World &world, float ratio, b2ParticleSystem &particleSystem);
   void load(const pugi::xml_node &node);
