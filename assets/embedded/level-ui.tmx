@@ -19,10 +19,10 @@
  <objectgroup id="2" name="B2Static">
   <object id="1" name="Start" x="0" y="176" width="32" height="16">
    <properties>
-    <property name="TextureCount" type="int" value="2"/>
+    <property name="TextureCount" type="int" value="3"/>
     <property name="Textures">start
 start2
-end=plank</property>
+end=restart</property>
    </properties>
   </object>
  </objectgroup>

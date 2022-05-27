@@ -92,6 +92,13 @@ plank2
   orig: 7, 7
   offset: 0, 0
   index: -1
+restart
+  rotate: false
+  xy: 112, 20
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
 start
   rotate: false
   xy: 112, 38
@@ -101,7 +108,7 @@ start
   index: -1
 start2
   rotate: false
-  xy: 112, 20
+  xy: 112, 2
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
