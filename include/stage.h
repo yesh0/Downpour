@@ -58,13 +58,12 @@ class StageManager : public Stage {
 private:
   using Stages = std::list<std::unique_ptr<Stage>>;
   using TimedStage = std::pair<float, Stages::iterator>;
-  struct TimedStageLess
-      : public std::binary_function<TimedStage, TimedStage, bool> {
+  struct TimedStageLess {
     bool operator()(const TimedStage &a, const TimedStage &b) {
       return a.first < b.first;
     }
   };
-  
+
   Stages stages;
   AssetManager& assets;
   const TiledWorldDef::RenDef& rendering;
