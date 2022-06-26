@@ -19,6 +19,12 @@ option(
   ON
 )
 
+option(
+  PRESENTATION
+  "Whether to allow insecure command line input"
+  ON
+)
+
 # liquidfun
 FetchContent_Declare(
   liquidfun

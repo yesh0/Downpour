@@ -19,6 +19,10 @@ if(BUNDLE_DOWNPOUR)
   add_compile_definitions(BUNDLE_DOWNPOUR)
 endif()
 
+if(PRESENTATION)
+  add_compile_definitions(PRESENTATION)
+endif()
+
 set_target_properties(downpour PROPERTIES
   CXX_STANDARD 17
   CXX_EXTENSIONS OFF

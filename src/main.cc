@@ -47,16 +47,17 @@ int main(int argc, char** argv) {
   RainMixer mixer(manager, 1, 21, "waterfall.ogg");
 
   StageManager stageManager(manager, mixer, rendering);
-#ifdef BUNDLE_DOWNPOUR
-  /* Release */
-  stageManager.push("Title");
-#else
+
+#if !defined(BUNDLE_DOWNPOUR) || defined (PRESENTATION)
   /* Debug */
   if (argc == 1) {
     stageManager.push("Title");
   } else {
     stageManager.push(argv[1]);
   }
+#else
+  /* Release */
+  stageManager.push("Title");
 #endif
 
   RateLimiter limiter{60};
